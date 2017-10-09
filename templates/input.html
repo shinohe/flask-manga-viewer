@@ -1,0 +1,22 @@
+{% extends "base_layout.html" %}
+{% block content %}
+	<!-- Form
+	================================================== -->
+<div class="form">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="error-message" style="color:red">
+					{% if error_message %}
+						{{ error_message }}
+					{% endif %}
+				</div>
+				<form "/upload" method="post" class="form-inline">
+					<input type="file" name="inputFile"/>
+					<input type="submit" value="ファイルを送信"/>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

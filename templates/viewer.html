@@ -1,0 +1,56 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<script type="text/javascript">
+$(function(){
+var mySwiper;
+	$.ajax({
+		type: "POST",
+		url: "/Viewer/list",
+		data:'{"page":"{{page}}"}',
+		contentType: "application/json",
+		dataType: "json",
+		success: function(msg){
+			console.log(msg);
+			$.each(msg,function( index, file){
+				var $div = $("<div class='swiper-slide' style='position:relative;'></div>");
+				var $image = $("<image src='/static/images/{{page}}/" + file.fileName + "'style='position:relative;'>");
+				var rate = file.width / window.innerWidth;
+				var top = (window.innerHeight - file.height/rate)/2;
+				if (top < 0) {
+					top = 0;
+					rate = file.height / window.innerHeight;
+					$image.css('top',top+'px');
+					$image.css('width',file.width/rate+'px');
+					$image.css('height',window.innerHeight+'px');
+				} else {
+					$image.css('top',top+'px');
+					$image.css('width',window.innerWidth+'px');
+					$image.css('height',file.height/rate+'px');
+				}
+				$div.append($image);
+				$(".swiper-wrapper").append($div);
+			});
+			mySwiper = $('.swiper-container').swiper({
+				pagination: '.pagination',
+				loop:true,
+				paginationClickable:true,
+				calculateHeight:true,
+				touchRatio:0.6,
+			});
+		}
+	});
+});
+</script>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="swiper-container">
+				<div class="swiper-wrapper">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

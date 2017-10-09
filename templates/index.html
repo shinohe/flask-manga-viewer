@@ -1,0 +1,29 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+<style >
+div.indexContent, div.indexContent div {
+	min-height: auto;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+	
+});
+</script>
+<div id="headerArea" data-role="page">
+	<div data-role="header"><h1>ネットWEBビューワー</h1></div>
+	<div data-role="content">
+		<div class="form">
+			<div class="container indexContent">
+				<div class="row">
+					<div class="col-md-12">
+						<a href="/Viewer?page=bj01">サンプルページ</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div data-role="footer">&copy; jdragon.com</div>
+</div>
+{% endblock %}

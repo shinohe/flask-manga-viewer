@@ -1,2 +1,15 @@
 # flask-manga-viewer
-flaskã‚’ä½¿ç”¨ã—ãŸwebã®æ¼«ç”»ãƒ“ãƒ¥ãƒ¼ã‚¢ãƒ¼ãƒ†ã‚¹ãƒˆã§ã™
+
+flask‚Å‚Ì–Ÿ‰æƒrƒ…[ƒ[‚ÌƒTƒ“ƒvƒ‹‚Å‚·
+
+ŒŸõ‚È‚Ç‚ª–¢ŽÀ‘•‚Æ‚È‚Á‚Ä‚Ü‚·B
+
+‚Ü‚½AƒTƒ“ƒvƒ‹–Ÿ‰æ‚Í”ÅŒ ƒtƒŠ[‚Ìƒuƒ‰ƒbƒNƒWƒƒƒbƒN‚É‚æ‚ë‚µ‚­‚ðŽg—p‚³‚¹‚Ä‚¢‚½‚¾‚¢‚Ä‚¨‚è‚Ü‚·B
+
+‡@rquirment.txt‚ðƒCƒ“ƒ|[ƒg‚·‚é
+
+‡A$python main.py ‚ÅŽÀs
+
+‡B[http://localhost:5000/](http://localhost:5000/)‚ÉƒAƒNƒZƒX
+
+
