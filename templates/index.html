@@ -2,13 +2,106 @@
 {% block content %}
 
 <style >
+h2.ui-bar{
+	font-size: 13px;
+	margin: 0.5em 0;
+}
+.listThumbnail{
+	width:100px;
+	height:145px;
+}
 div.indexContent, div.indexContent div {
 	min-height: auto;
 }
+
+div.sumbnail div.ui-bar {
+	font-size: 13px !important;
+	padding: 0.3em 0.5em;
+}
+
+div.sumbnail div.ui-bar .ui-btn {
+	margin: 0 auto;
+}
+
+.listTitle {
+	font-weight: 400;
+	font-size: x-small;
+	white-space: normal;
+	overflow: hidden;
+	text-align: center;
+	height:3em;
+}
+.listGenre {
+	font-weight: 400;
+	font-size: xx-small;
+	max-height: 1em;
+}
+
+.listShowDate {
+	font-weight: 400;
+	font-size: xx-small;
+}
+
+
 </style>
 <script type="text/javascript">
 $(function(){
+	$.ajax({
+		type: "POST",
+		url: "/Latest/list",
+		contentType: "application/json",
+		data:'{"page":"{{page}}"}',
+		dataType: "json",
+		success: function(msg){
+			$.each(msg, function( index, file){
+				var $div = $("<div class='ui-bar'><span href='' class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><a href='/Viewer?page=" + file.folderName + "' class='ui-link'><div align='center' style='width:100%'><div class='listTmnArea'><img class='listThumbnail' src='/" + file.thumbnailPath + "' alt=''></div></div></a><div class='listTitle'><strong>" + file.name + "</strong></div><div class='listGenre'>" + file.category + "</div><span class='listShowDate'>" + file.updateDate + "</span></div></span></span></span></div>");
+				var $divBlock;
+				var $fieldset;
+				if ( index%2 == 0) {
+					$fieldset = $("<fieldset class='ui-grid-a'></fieldset>")
+					$divBlock = $("<div class='sumbnail ui-block-a'></div>");
+				} else {
+					$fieldset = $(".indexContent fieldset:last");
+					$divBlock = $("<div class='sumbnail ui-block-b'></div>");
+				}
+				$divBlock.append($div);
+				
+				$fieldset.append($divBlock);
+				$(".indexContent").append($fieldset);
+			});
+		}
+	});
 	
+	$("#searchButton").click(function(){
+		$.ajax({
+			type: "POST",
+			url: "/Search/list",
+			contentType: "application/json",
+			data:'{"searchText":"'+$("#searchText").val()+'"}',
+			dataType: "json",
+			success: function(msg){
+				//ページに表示されているサムネをすべて削除
+				$(".indexContent").children("fieldset.ui-grid-a").remove();
+			
+				$.each(msg, function( index, file){
+					var $div = $("<div class='ui-bar'><span href='' class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><a href='/Viewer?page=" + file.folderName + "' class='ui-link'><div align='center' style='width:100%'><div class='listTmnArea'><img class='listThumbnail' src='/" + file.thumbnailPath + "' alt=''></div></div></a><div class='listTitle'><strong>" + file.name + "</strong></div><div class='listGenre'>" + file.category + "</div><span class='listShowDate'>" + file.updateDate + "</span></div></span></span></span></div>");
+					var $divBlock;
+					var $fieldset;
+					if ( index%2 == 0) {
+						$fieldset = $("<fieldset class='ui-grid-a'></fieldset>")
+						$divBlock = $("<div class='sumbnail ui-block-a'></div>");
+					} else {
+						$fieldset = $(".indexContent fieldset:last");
+						$divBlock = $("<div class='sumbnail ui-block-b'></div>");
+					}
+					$divBlock.append($div);
+					
+					$fieldset.append($divBlock);
+					$(".indexContent").append($fieldset);
+				});
+			}
+		});
+	});
 });
 </script>
 <div id="headerArea" data-role="page">
@@ -16,11 +109,11 @@ $(function(){
 	<div data-role="content">
 		<div class="form">
 			<div class="container indexContent">
-				<div class="row">
-					<div class="col-md-12">
-						<a href="/Viewer?page=bj01">サンプルページ</a>
-					</div>
+				<div class="searchArea">
+					<input type="text" id="searchText" placeholder="タイトル等"/>
+					<input type="button" id="searchButton" value="検索"/>
 				</div>
+				<h2 class="ui-bar ui-bar-b">新着 - {{page}}ページ</h2>
 			</div>
 		</div>
 	</div>

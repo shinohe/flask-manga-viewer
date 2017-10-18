@@ -5,6 +5,13 @@ from flask_httpauth import HTTPDigestAuth
 import os
 import json
 import PIL.Image
+import sqlite3
+from datetime import datetime
+
+
+dbpath = 'db/'
+dbname = 'database.db'
+tablename = 'books'
 
 # 自身の名称を app という名前でインスタンス化する
 app = Flask(__name__)
@@ -12,7 +19,7 @@ app.config['SECRET_KEY'] = 'secret key here'
 auth = HTTPDigestAuth()
 
 users = {
-	"y-shinohe1": "y-shinohe1"
+	"jdragon1": "jdragon1"
 }
 
 class InvalidUsage(Exception):
@@ -29,6 +36,37 @@ class InvalidUsage(Exception):
 		rv = dict(self.payload or ())
 		rv['message'] = self.message
 		return rv
+
+class Thumbnail:
+	name = ''
+	folderName = ''
+	thumbnailPath = ''
+	category = ''
+	description = ''
+	updateDate = ''
+	width = 0
+	height = 0
+	def __init__(self,name, folderName, thumbnailPath, width=None, height=None,description=None, category=None, updateDate=None):
+		self.name = name
+		self.folderName = folderName
+		self.thumbnailPath = thumbnailPath
+		self.width = width
+		self.height = height
+		self.description = description
+		self.category = category
+		self.updateDate = updateDate
+	
+	def serialize(self):
+		return {
+		'name': self.name, 
+		'folderName': self.folderName, 
+		'thumbnailPath': self.thumbnailPath, 
+		'description': self.description, 
+		'category': self.category, 
+		'updateDate': self.updateDate, 
+		'width': self.width,
+		'height': self.height		 
+		}
 
 class ViewerImage:
 	fileName = ''
@@ -50,9 +88,43 @@ class ViewerImageJSONEncoder(json.JSONEncoder):
 	def default(self, o):
 		if isinstance(o, ViewerImage):
 			return o.serialize()
+		if isinstance(o, Thumbnail):
+			return o.serialize()
 		return super(ViewerImageJSONEncoder, self).default(o)
 		
 app.json_encoder = ViewerImageJSONEncoder
+
+# メソッド
+def thumbnnailListNoKana(page, pageSize):
+	return thumbnnailList(page, pageSize, None)
+
+def thumbnnailList(page, pageSize, searchText):
+	imageList = []
+	params =(pageSize, page*pageSize)
+	
+	# FIXME LIMIT OFFSETでページネーションしてるのでチューニングは必要	
+	conn = sqlite3.connect(dbpath+dbname)
+	c = conn.cursor()
+	
+	select_sql = 'select * from books order by updateDate desc limit ? offset ?'
+	if searchText:
+		select_sql = 'select * from books where bookName like ? or kana like ? or category like ? order by updateDate desc limit ? offset ?'
+		kana = u"%{}%".format(searchText)
+		params =(kana, kana, kana, pageSize, page*pageSize)
+		print(params)
+	for row in c.execute(select_sql, params):
+		name = row[1]
+		path = row[3]
+		folderName = row[4]
+		category = row[5]
+		updateDate = row[6]
+		fileImage = PIL.Image.open(path)
+		viewer = Thumbnail(name, folderName, path, width=fileImage.size[0], height=fileImage.size[1], category=category, updateDate=updateDate)
+		imageList.append(viewer)
+	conn.close
+			
+	return jsonify(imageList)
+
 
 # Digest認証
 @auth.get_password
@@ -67,16 +139,58 @@ def get_pw(username):
 @app.route('/')
 def index():
 	title = "flaskMangaViewer"
+	page = 1
 	# index.html をレンダリングする
-	return render_template('index.html', title=title)
+	return render_template('index.html', title=title, page=page)
+
+@app.route('/Search/list', methods=['POST'])
+def searchList():
+	page = 0
+	pageSize = 8
+	searchText = ''
+	print(request.data)
+	if request.data:
+		content_body_dict = json.loads(request.data)
+	
+		if 'page' in content_body_dict:
+			page = request.json.get('page')
+			page = int(page) - 1
+			if page < 0:
+				page = 0
+
+		if 'pageSize' in content_body_dict:
+			pageSize = request.json.get('pageSize')
+			
+		if 'searchText' in content_body_dict:
+			searchText = request.json.get('searchText')
+	return thumbnnailList(page, pageSize, searchText)
+
+@app.route('/Latest/list', methods=['POST'])
+def latestList():
+	
+	page = 0
+	pageSize = 8
+	if request.data:
+		content_body_dict = json.loads(request.data)
+	
+		if 'page' in content_body_dict:
+			page = request.json.get('page')
+			page = int(page) - 1
+			if page < 0:
+				page = 0
+
+		if 'pageSize' in content_body_dict:
+			pageSize = request.json.get('pageSize')
+		
+	return thumbnnailListNoKana(page, pageSize)
 
 @app.route('/Viewer')
 def viewer():
-	title = "ようこそ"
-	page = request.args.get("page", default="sam")
+	title = "flask-manga-viewer"
 	# viewer.html をレンダリングする
-	# pageにページ番号を記載 jsonで
-	return render_template('viewer.html', page=page, title=title)
+	page = request.args.get('page')
+	print(page)
+	return render_template('viewer.html', title=title, page=page)
 	
 @app.route('/Viewer/list', methods=['POST'])
 def viewList():
