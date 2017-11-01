@@ -43,8 +43,9 @@ div.sumbnail div.ui-bar .ui-btn {
 }
 
 #pageBack,#pageNext{
-	height:145px;
-	line-height: 145px;
+	height:80px;
+	line-height: 80px;
+	font-size: 21px;
 }
 
 </style>
@@ -100,7 +101,7 @@ var searchList = function(){
 		type: "POST",
 		url: "/Search/list",
 		contentType: "application/json",
-		data:'{"page":' + page + ',"searchText":"'+$("#searchText").val()+', "pageSize":8}',
+		data:'{"page":' + page + ',"searchText":"'+$("#searchText").val()+'", "pageSize":8}',
 		dataType: "json",
 		success: function(msg){
 			successCallBack(msg);
