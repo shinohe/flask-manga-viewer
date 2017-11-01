@@ -85,7 +85,7 @@ var latestList = function(){
 		type: "POST",
 		url: "/Latest/list",
 		contentType: "application/json",
-		data:'{"page":' + page + ', "pageSize":2}',
+		data:'{"page":' + page + ', "pageSize":8}',
 		dataType: "json",
 		success: function(msg){
 			successCallBack(msg);
@@ -100,7 +100,7 @@ var searchList = function(){
 		type: "POST",
 		url: "/Search/list",
 		contentType: "application/json",
-		data:'{"page":' + page + ',"searchText":"'+$("#searchText").val()+'"}',
+		data:'{"page":' + page + ',"searchText":"'+$("#searchText").val()+', "pageSize":8}',
 		dataType: "json",
 		success: function(msg){
 			successCallBack(msg);

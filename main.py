@@ -177,7 +177,6 @@ def searchList():
 	page = 0
 	pageSize = 8
 	searchText = ''
-	print(request.data)
 	if request.data:
 		content_body_dict = json.loads(request.data)
 	
@@ -218,25 +217,17 @@ def viewer():
 	title = "flask-manga-viewer"
 	# viewer.html をレンダリングする
 	page = request.args.get('page')
-	print(page)
 	return render_template('viewer.html', title=title, page=page)
 	
 @app.route('/Viewer/list', methods=['POST'])
 def viewList():
-	print("ビューリスト取得")
-	print(request.data)
 	content_body_dict = json.loads(request.data)
-	print(content_body_dict.get('page'))
 	if request.headers['Content-Type'] != 'application/json':
-		print('jsonではない')
-		print(request.headers['Content-Type'])
 		return jsonify(res='error'), 400
 	page = request.json.get('page')
-	print('ページ='+page)
 	try:
 		fileList = os.listdir('static/images/'+page)
 	except FileNotFoundError:
-		print('ファイル、またはフォルダがありません path=static/images/'+page)
 		PIL.Image
 		raise InvalidUsage('ファイル、またはフォルダがありません path=static/images/'+page, status_code=404)
 		

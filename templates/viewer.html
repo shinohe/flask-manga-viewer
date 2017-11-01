@@ -12,17 +12,14 @@ var minHeight = 667;
 		contentType: "application/json",
 		dataType: "json",
 		success: function(msg){
-			console.log(msg);
 			$.each(msg,function( index, file){
 				var $div = $("<div class='swiper-slide' style='position:relative;'></div>");
 				var $image = $("<image src='/static/images/{{page}}/" + file.fileName + "'style='position:relative;'>");
 				var rate = file.width / window.innerWidth;
 				var height = window.innerHeight;
-				console.log(height);
 				if (height > minHeight) {
 					height = minHeight;
 				}
-				console.log(height);
 				var top = (height - file.height/rate)/2;
 				if (top < 0) {
 					top = 0;
