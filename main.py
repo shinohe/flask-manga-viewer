@@ -6,6 +6,7 @@ import os
 import json
 import PIL.Image
 import sqlite3
+import math
 from datetime import datetime
 
 
@@ -36,6 +37,24 @@ class InvalidUsage(Exception):
 		rv = dict(self.payload or ())
 		rv['message'] = self.message
 		return rv
+
+class PageList:
+	list = []
+	pageSize = 8
+	page = 1
+	maxSize = 0
+	def __init__(self,list, pageSize, maxSize, page):
+		self.list = list
+		self.pageSize = pageSize
+		self.maxSize = maxSize
+		self.page = page
+	def serialize(self):
+		return {
+		'list':ViewerImageJSONEncoder().encode(self.list),
+		'pageSize':self.pageSize,
+		'maxSize':self.maxSize,
+		'page':self.page
+		}
 
 class Thumbnail:
 	name = ''
@@ -86,6 +105,8 @@ class ViewerImage:
 
 class ViewerImageJSONEncoder(json.JSONEncoder):
 	def default(self, o):
+		if isinstance(o, PageList):
+			return o.serialize()
 		if isinstance(o, ViewerImage):
 			return o.serialize()
 		if isinstance(o, Thumbnail):
@@ -105,13 +126,20 @@ def thumbnnailList(page, pageSize, searchText):
 	# FIXME LIMIT OFFSETでページネーションしてるのでチューニングは必要	
 	conn = sqlite3.connect(dbpath+dbname)
 	c = conn.cursor()
-	
+
+	count_sql = 'select count(*) from books'
 	select_sql = 'select * from books order by updateDate desc limit ? offset ?'
 	if searchText:
+		count_sql = 'select count(*) from books where bookName like ? or kana like ? or category like ?'
 		select_sql = 'select * from books where bookName like ? or kana like ? or category like ? order by updateDate desc limit ? offset ?'
 		kana = u"%{}%".format(searchText)
 		params =(kana, kana, kana, pageSize, page*pageSize)
-		print(params)
+		count_params = (kana, kana, kana)
+		c.execute(count_sql, count_params)
+	else:
+		c.execute(count_sql)
+	maxSize = c.fetchone()
+	
 	for row in c.execute(select_sql, params):
 		name = row[1]
 		path = row[3]
@@ -122,8 +150,9 @@ def thumbnnailList(page, pageSize, searchText):
 		viewer = Thumbnail(name, folderName, path, width=fileImage.size[0], height=fileImage.size[1], category=category, updateDate=updateDate)
 		imageList.append(viewer)
 	conn.close
-			
-	return jsonify(imageList)
+	
+	pageList = PageList(imageList, pageSize, math.ceil(maxSize[0]/pageSize), page)
+	return jsonify(pageList)
 
 
 # Digest認証

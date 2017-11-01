@@ -4,6 +4,7 @@
 <script type="text/javascript">
 $(function(){
 var mySwiper;
+var minHeight = 667;
 	$.ajax({
 		type: "POST",
 		url: "/Viewer/list",
@@ -16,13 +17,19 @@ var mySwiper;
 				var $div = $("<div class='swiper-slide' style='position:relative;'></div>");
 				var $image = $("<image src='/static/images/{{page}}/" + file.fileName + "'style='position:relative;'>");
 				var rate = file.width / window.innerWidth;
-				var top = (window.innerHeight - file.height/rate)/2;
+				var height = window.innerHeight;
+				console.log(height);
+				if (height > minHeight) {
+					height = minHeight;
+				}
+				console.log(height);
+				var top = (height - file.height/rate)/2;
 				if (top < 0) {
 					top = 0;
-					rate = file.height / window.innerHeight;
+					rate = file.height / height;
 					$image.css('top',top+'px');
 					$image.css('width',file.width/rate+'px');
-					$image.css('height',window.innerHeight+'px');
+					$image.css('height',height+'px');
 				} else {
 					$image.css('top',top+'px');
 					$image.css('width',window.innerWidth+'px');
