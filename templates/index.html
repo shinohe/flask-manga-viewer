@@ -42,6 +42,11 @@ div.sumbnail div.ui-bar .ui-btn {
 	font-size: xx-small;
 }
 
+.pageArea {
+	margin-top: 10px;
+
+}
+
 #pageBack,#pageNext{
 	height:80px;
 	line-height: 80px;
@@ -91,7 +96,7 @@ var latestList = function(){
 		success: function(msg){
 			successCallBack(msg);
 			$h2 = $('<h2 class="ui-bar ui-bar-b">新着 - ' + page + 'ページ</h2>');
-			$(".indexContent").prepend($h2);
+			$(".searchArea").after($h2);
 		}
 	});
 };
@@ -106,7 +111,7 @@ var searchList = function(){
 		success: function(msg){
 			successCallBack(msg);
 			$h2 = $('<h2 class="ui-bar ui-bar-b">検索 - ' + page + 'ページ</h2>');
-			$(".indexContent").prepend($h2);
+			$(".searchArea").after($h2);
 		}
 	});
 };

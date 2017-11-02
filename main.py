@@ -7,6 +7,7 @@ import json
 import PIL.Image
 import sqlite3
 import math
+import logs
 from datetime import datetime
 
 
@@ -283,5 +284,7 @@ def error_handler(error):
 	return response, error.status_code
 
 if __name__ == '__main__':
-	app.debug = True # デバッグモード有効化
+	logs.init_app(app)
+	app.debug = True  #デバッグモード有効化
 	app.run(host='0.0.0.0') # どこからでもアクセス可能に
+
