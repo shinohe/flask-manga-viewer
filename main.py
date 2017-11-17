@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # Flask などの必要なライブラリをインポートする
 from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 import numpy as np
