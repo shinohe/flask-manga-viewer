@@ -14,10 +14,10 @@ from datetime import datetime
 
 import sys  
 sys.path.append('SOME_PATH\python\Lib\encodings');  
-  
+
 import codecs  
-import utf_8  
-  
+import encodings.utf_8
+
 codecs.register(lambda encoding: utf_8.getregentry()) 
 
 dbpath = 'db/'
