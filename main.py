@@ -10,6 +10,7 @@ import PIL.Image
 import sqlite3
 import math
 import logs
+import kanaUtils
 from datetime import datetime
 
 import sys  
@@ -140,6 +141,8 @@ def thumbnnailList(page, pageSize, searchText):
 	count_sql = 'select count(*) from books'
 	select_sql = 'select * from books order by updateDate desc limit ? offset ?'
 	if searchText:
+		if (kanaUtils.ishira(searchText)):
+			searchText = kanaUtils.hira_to_kata(searchText)
 		count_sql = 'select count(*) from books where bookName like ? or kana like ? or category like ?'
 		select_sql = 'select * from books where bookName like ? or kana like ? or category like ? order by updateDate desc limit ? offset ?'
 		kana = u"%{}%".format(searchText)
