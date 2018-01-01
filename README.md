@@ -1,13 +1,17 @@
 # flask-manga-viewer
 
-flask‚Å‚Ì–Ÿ‰æƒrƒ…[ƒ[‚ÌƒTƒ“ƒvƒ‹‚Å‚·
+## heroku  
+https://ancient-taiga-12123.herokuapp.com/
 
-ƒTƒ“ƒvƒ‹–Ÿ‰æ‚Í”ÅŒ ƒtƒŠ[‚Ìƒuƒ‰ƒbƒNƒWƒƒƒbƒN‚É‚æ‚ë‚µ‚­‚ðŽg—p‚³‚¹‚Ä‚¢‚½‚¾‚¢‚Ä‚¨‚è‚Ü‚·B
+## usage
+flaskã§ã®æ¼«ç”»ãƒ“ãƒ¥ãƒ¼ãƒ¯ãƒ¼ã®ã‚µãƒ³ãƒ—ãƒ«ã§ã™
 
-‡@rquirment.txt‚ðƒCƒ“ƒ|[ƒg‚·‚é
+ã‚µãƒ³ãƒ—ãƒ«æ¼«ç”»ã¯ç‰ˆæ¨©ãƒ•ãƒªãƒ¼ã®ãƒ–ãƒ©ãƒƒã‚¯ã‚¸ãƒ£ãƒƒã‚¯ã«ã‚ˆã‚ã—ãã‚’ä½¿ç”¨ã•ã›ã¦ã„ãŸã ã„ã¦ãŠã‚Šã¾ã™ã€‚
 
-‡A$python main.py ‚ÅŽÀs
+â‘ rquirment.txtã‚’ã‚¤ãƒ³ãƒãƒ¼ãƒˆã™ã‚‹
 
-‡B[http://localhost:5000/](http://localhost:5000/)‚ÉƒAƒNƒZƒX
+â‘¡$python main.py ã§å®Ÿè¡Œ
+
+â‘¢[http://localhost:5000/](http://localhost:5000/)ã«ã‚¢ã‚¯ã‚»ã‚¹
 
 
