@@ -57,6 +57,20 @@ div.sumbnail div.ui-bar .ui-btn {
 <script type="text/javascript">
 var page = 1;
 var searchFlag = false;
+
+var showLoading = function(){
+	$.mobile.loading("show", {
+		text: "Loading...",
+		textVisible: true,
+		theme: "z",
+		html: ""
+	});
+}
+
+var hideLoading = function(){
+	$.mobile.loading("hide");
+}
+
 var successCallBack = function(msg){
 	$(".indexContent").children("h2.ui-bar").remove();
 	$(".indexContent").children("fieldset.ui-grid-a").remove();
@@ -77,7 +91,12 @@ var successCallBack = function(msg){
 		
 		$fieldset.append($divBlock);
 		$(".indexContent").append($fieldset);
+		
+		$fieldset.ready(hideLoading());
 	});
+	if (thumNailList.length < 1) {
+		hideLoading()
+	}
 	
 	if (page >= msg.maxSize) {
 		$("#pageNext").hide();
@@ -87,6 +106,7 @@ var successCallBack = function(msg){
 };
 
 var latestList = function(){
+	showLoading();
 	$.ajax({
 		type: "POST",
 		url: "/Latest/list",
@@ -102,6 +122,7 @@ var latestList = function(){
 };
 
 var searchList = function(){
+	showLoading();
 	$.ajax({
 		type: "POST",
 		url: "/Search/list",
@@ -124,10 +145,20 @@ var pageChange = function(){
 	}
 };
 
+var onKeyEvent = function(code)
+{
+	//エンターキー押下なら
+	if(13 === code)
+	{
+		$("#searchButton").click();
+	}
+}
+
 $(function(){
 	latestList();
 	
 	$("#searchButton").click(function(){
+		showLoading();
 		searchList();
 		searchFlag = true;
 	});
@@ -151,10 +182,9 @@ $(function(){
 		<div class="form">
 			<div class="container indexContent">
 				<div class="searchArea">
-					<input type="text" id="searchText" placeholder="タイトル等"/>
+					<input type="text" id="searchText" placeholder="タイトル等" onkeypress="onKeyEvent(event.keyCode);"/>
 					<input type="button" id="searchButton" value="検索"/>
 				</div>
-				
 			</div>
 			<div class="pageArea">
 				<fieldset class='ui-grid-a'>
