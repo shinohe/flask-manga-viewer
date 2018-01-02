@@ -13,7 +13,7 @@ var minHeight = 667;
 		dataType: "json",
 		success: function(msg){
 			msg.sort(function(a,b){
-				return a.fileName > b.fileName ? 1 : -1
+				return a.fileName < b.fileName ? 1 : -1
 			});
 		
 			$.each(msg,function( index, file){
