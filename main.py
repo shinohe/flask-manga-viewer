@@ -11,6 +11,8 @@ import sqlite3
 import math
 import logs
 import kanaUtils
+import re
+import zipfile
 from datetime import datetime
 
 import sys  
@@ -280,14 +282,51 @@ def inputFile():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-	the_file = request.files['the_file']
-	if os.path.exists('/crawler/download/'+the_file.filename):
-		error_message = the_file.filename + u"存在しています."
+	pattern = re.compile(u'.*\.zip')
+	inputFile = request.files['inputFile']
+
+	# zipファイルのみ受け付ける
+	m = pattern.match(inputFile.filename)
+	if m is None:
+		error_message = inputFile.filename + u" はzipファイルではありません"
+		title = u"ファイルアップロードエラー"
+		return render_template('input.html', error_message=error_message, title=title)
+	if not os.path.exists('crawler'+os.sep+'download'+os.sep):
+		os.makedirs('crawler'+os.sep+'download'+os.sep)
+	
+	directorypath = '.'+os.sep+'crawler'+os.sep+'download'+os.sep+inputFile.filename
+	if os.path.exists(directorypath):
+		error_message = inputFile.filename + u"存在しています."
 		title = u"ファイルアップロードエラー"
 		return render_template('input.html', error_message=error_message, title=title)
 	else:
-		the_file.save("./" + the_file.filename)
-	return ""
+		inputFile.save(directorypath)
+		print('saved file path: '+directorypath)
+		while True:
+			# 新しいディレクトリを作成
+			openPath = 'static'+os.sep+'images'+os.sep+kanaUtils.randamAlphaStr(10)
+			if not os.path.exists(openPath):
+				os.makedirs(openPath)
+				break
+
+		with zipfile.ZipFile(directorypath, 'r') as zf:
+			pattern = re.compile(u'.*\.jpg')
+			print(zf.namelist())
+			for f in zf.namelist():
+				fileMuch = pattern.match(f)
+				if fileMuch is None:
+					print('foldername :'+f)
+				else:
+					d = openPath+os.sep+os.path.basename(f)
+					print('filename :'+d)
+					with open(d, 'wb') as uzf:
+						uzf.write(zf.read(f))
+						uzf.close()
+
+		
+	print("OK")
+
+	return render_template('input.html', title=u'アップロード完了')
 	
 	
 @app.errorhandler(InvalidUsage)

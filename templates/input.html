@@ -1,18 +1,23 @@
 {% extends "base_layout.html" %}
 {% block content %}
-	<!-- Form
-	================================================== -->
+<!-- Form ================================================== -->
+<style>
+	form#uploadForm div{
+		min-height: auto;
+	}
+</style>
 <div class="form">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<div class="error-message" style="color:red">
+				<h4>ファイルアップロード画面</h4>
+				<div class="error-message" style="color:red;min-height:auto;">
 					{% if error_message %}
 						{{ error_message }}
 					{% endif %}
 				</div>
-				<form "/upload" method="post" class="form-inline">
-					<input type="file" name="inputFile"/>
+				<form action="/upload" method="post" class="form-inline" id="uploadForm" enctype='multipart/form-data' data-ajax="false">
+					<input type="file" id="inputFile" name="inputFile"/>
 					<input type="submit" value="ファイルを送信"/>
 				</form>
 			</div>
