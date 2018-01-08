@@ -2,10 +2,11 @@
 
 import sqlite3
 from datetime import datetime
+dbname = 'db/database.db'
 
 
 def insertBooks(bookName, bookNameKana, thumbnailPath, path, category):
-	conn = psycopg2.connect("host=ec2-54-83-46-116.compute-1.amazonaws.com port=5432 dbname=dbfppmk6l1t0tt user=xnsrwjdwqjosvp password=128e66d4fa11ab6667cb7fbc456f16f95b34ccda2cc1431e945d12baeed76bf9")
+	conn = sqlite3.connect(dbname)
 	c = conn.cursor()
 
 	insId = 0
@@ -16,7 +17,7 @@ def insertBooks(bookName, bookNameKana, thumbnailPath, path, category):
 		insId = int(row[0]) + 1
 
 	# 本のデータの挿入増えたら足してく
-	insert_sql = 'insert into books(id, bookName, kana, thumbnailPath, path, category, updateDate) values (%s,%s,%s,%s,%s,%s,%s)'
+	insert_sql = 'insert into books(id, bookName, kana, thumbnailPath, path, category, updateDate) values (?,?,?,?,?,?,?)'
 	books = [
 	    (insId, bookName, bookNameKana,thumbnailPath, path, category, datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 	]
