@@ -16,14 +16,11 @@ var minHeight = 667;
 				return a.fileName < b.fileName ? 1 : -1
 			});
 			
+			var height = window.innerHeight;
 			$.each(msg,function( index, file){
 				var $div = $("<div class='swiper-slide' style='position:relative;'></div>");
 				var $image = $("<image src='/static/images/{{page}}/" + file.fileName + "'style='position:relative;'>");
 				var rate = file.width / window.innerWidth;
-				var height = window.innerHeight;
-				if (height > minHeight) {
-					height = minHeight;
-				}
 				var top = (height - file.height/rate)/2;
 				if (top < 0) {
 					top = 0;
@@ -38,6 +35,10 @@ var minHeight = 667;
 				}
 				$div.append($image);
 				$(".swiper-wrapper").append($div);
+				
+				$(".container.viewer").height(height);
+				$(".container.viewer").css("height",height+'px');
+				
 			});
 			mySwiper = $('.swiper-container').swiper({
 				loop:true,

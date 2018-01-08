@@ -19,8 +19,17 @@
 			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 		<![endif]-->
 		<style>
-			html, body {
-				background-color:#000000;
+			html {
+				overflow: hidden;
+				height: 100%;
+			}
+			body {
+				position: absolute;  /* またはfixed */
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				overflow: auto;
 			}
 			.swiper-container, .swiper-slide {
 				width: auto;
@@ -38,7 +47,7 @@
 			}
 			
 			.swiper-container-horizontal>.swiper-scrollbar {
-				bottom:80px;
+				bottom:10px;
 			}
 			
 			.pagination {

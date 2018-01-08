@@ -34,7 +34,6 @@ div.container.viewer {
 
 div.container,
 div.container div {
-	min-height: 667px;
 	max-width: none !important;
 }
 
