@@ -13,6 +13,7 @@ import logs
 import kanaUtils
 import re
 import zipfile
+from db import insertDb
 from datetime import datetime
 
 import sys  
@@ -270,7 +271,18 @@ def post():
 	else:
 		return redirect(url_for('index'))
 
-# TODO ファイル追加画面
+# 管理画面
+@app.route('/menu', methods=['GET', 'POST'])
+@auth.login_required
+def menu():
+	title = u"flask-manga-viewer"
+	if request.method == 'GET':
+		return render_template('menu.html', title=title)
+	else:
+		return redirect(url_for('/menu'))
+
+
+# ファイル追加
 @app.route('/inputFile', methods=['GET', 'POST'])
 @auth.login_required
 def inputFile():
@@ -278,12 +290,15 @@ def inputFile():
 	if request.method == 'GET':
 		return render_template('input.html', title=title)
 	else:
-		return redirect(url_for('input.html'))
+		return redirect(url_for('inputFile'))
 
 @app.route('/upload', methods=['POST'])
 def upload():
 	pattern = re.compile(u'.*\.zip')
 	inputFile = request.files['inputFile']
+	title =  request.form['title']
+	titleKana =  request.form['titleKana']
+	category =  request.form['category']
 
 	# zipファイルのみ受け付ける
 	m = pattern.match(inputFile.filename)
@@ -295,38 +310,46 @@ def upload():
 		os.makedirs('crawler'+os.sep+'download'+os.sep)
 	
 	directorypath = '.'+os.sep+'crawler'+os.sep+'download'+os.sep+inputFile.filename
-	if os.path.exists(directorypath):
-		error_message = inputFile.filename + u"存在しています."
-		title = u"ファイルアップロードエラー"
-		return render_template('input.html', error_message=error_message, title=title)
-	else:
-		inputFile.save(directorypath)
-		print('saved file path: '+directorypath)
-		while True:
-			# 新しいディレクトリを作成
-			openPath = 'static'+os.sep+'images'+os.sep+kanaUtils.randamAlphaStr(10)
-			if not os.path.exists(openPath):
-				os.makedirs(openPath)
-				break
+#	if os.path.exists(directorypath):
+#		error_message = inputFile.filename + u"存在しています."
+#		title = u"ファイルアップロードエラー"
+#		return render_template('input.html', error_message=error_message, title=title)
+	
+	inputFile.save(directorypath)
+	print('saved file path: '+directorypath)
+	while True:
+		# 新しいディレクトリを作成
+		randamAlphaDir = kanaUtils.randamAlphaStr(10)
+		openPath = 'static' + os.sep + 'images' + os.sep + randamAlphaDir
+		if not os.path.exists(openPath):
+			os.makedirs(openPath)
+			break
 
-		with zipfile.ZipFile(directorypath, 'r') as zf:
-			pattern = re.compile(u'.*\.jpg')
-			print(zf.namelist())
-			for f in zf.namelist():
-				fileMuch = pattern.match(f)
-				if fileMuch is None:
-					print('foldername :'+f)
-				else:
-					d = openPath+os.sep+os.path.basename(f)
-					print('filename :'+d)
-					with open(d, 'wb') as uzf:
-						uzf.write(zf.read(f))
-						uzf.close()
-
+	fileNameList = []
+	with zipfile.ZipFile(directorypath, 'r') as zf:
+		pattern = re.compile(u'.*\.jpg')
+		print(zf.namelist())
+		for f in zf.namelist():
+			fileMuch = pattern.match(f)
+			if fileMuch is None:
+				print('foldername :'+f)
+			else:
+				d = openPath+os.sep+os.path.basename(f)
+				fileNameList.append(d)
+				print('filename :'+d)
+				with open(d, 'wb') as uzf:
+					uzf.write(zf.read(f))
+					uzf.close()
+	fileNameList.sort()
+	firstFilePath = fileNameList[0]
 		
+		
+
+	# def insertBooks(bookName, bookNameKana, thumbnailPath, path, category):
+	insertDb.insertBooks(title, titleKana, firstFilePath, randamAlphaDir, category)
 	print("OK")
 
-	return render_template('input.html', title=u'アップロード完了')
+	return render_template('input.html', message=u'アップロードが正常に完了しました。')
 	
 	
 @app.errorhandler(InvalidUsage)

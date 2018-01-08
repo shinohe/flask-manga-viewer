@@ -16,10 +16,6 @@ var minHeight = 667;
 				return a.fileName < b.fileName ? 1 : -1
 			});
 			
-			if (msg.length > 0) {
-				msg.unshift(msg.pop());
-			}
-			
 			$.each(msg,function( index, file){
 				var $div = $("<div class='swiper-slide' style='position:relative;'></div>");
 				var $image = $("<image src='/static/images/{{page}}/" + file.fileName + "'style='position:relative;'>");
@@ -44,11 +40,15 @@ var minHeight = 667;
 				$(".swiper-wrapper").append($div);
 			});
 			mySwiper = $('.swiper-container').swiper({
-				pagination: '.pagination',
 				loop:true,
-				paginationClickable:true,
 				calculateHeight:true,
-				touchRatio:0.6,
+				touchRatio:2,
+				scrollbar:".swiper-scrollbar",
+				scrollbarHide:true,
+				scrollbarDraggable:true,
+				scrollbarSnapOnRelease:true,
+				nested:true,
+				initialSlide:msg.length-1
 			});
 		}
 	});
@@ -61,6 +61,7 @@ var minHeight = 667;
 			<div class="swiper-container">
 				<div class="swiper-wrapper">
 				</div>
+				<div class="swiper-scrollbar" style="min-height:20px;height:20px;"></div>
 			</div>
 		</div>
 	</div>

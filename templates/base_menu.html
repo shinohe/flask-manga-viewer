@@ -1,0 +1,67 @@
+<!-- Form ================================================== -->
+<style>
+	div.container, div.container div {
+		min-height: auto;
+	}
+	.ui-block-a input {
+		font-size:12px;
+	}
+	form#uploadForm div{
+		min-height: auto;
+	}
+	.form-inline{
+		display: block;
+	}
+	.col-md-12 {
+		padding: 0 0.5em;
+	}
+	.container .ui-btn {
+		background-color: #70b7ff;
+	}
+	.container .ui-btn:hover{
+		background-color: #a0d7ff;
+		color:#ffffff;
+	}
+	.container .ui-btn,
+	.container .ui-btn input{
+		color:#ffffff;
+	}
+	div.searchArea>div.ui-btn {
+		background-color: #87CEFA;
+	}
+	.menuContent {
+		padding-top: 10px;
+		background-color:#d6edff;
+		color:#6bb6ff;
+	}
+</style>
+<script type="text/javascript">
+$(function(){
+	$("#upload").click(function(){
+		window.location.href="/inputFile"
+	});
+	$("#list").click(function(){
+		window.location.href="/list"
+	});
+});
+</script>
+<div class="container menuContent">
+	<div class="row">
+		<div class="col-md-12">
+			<h6>管理メニュー</h6>
+			<div class="error-message" style="color:red;min-height:auto;">
+				{% if error_message %}
+					{{ error_message }}
+				{% endif %}
+			</div>
+			<fieldset class="ui-grid-b">
+				<div class="ui-block-a">
+					<input type="button" id="upload" name="upload" value="アップロード"/>
+				</div>
+				<div class="ui-block-b">
+					<input type="button" id="list" name="list" value="ファイル一覧"/>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+</div>

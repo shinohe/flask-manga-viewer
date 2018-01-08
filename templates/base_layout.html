@@ -27,6 +27,16 @@
 				height: auto;
 				text-align:center;
 			}
+			
+			div div.swiper-scrollbar{
+				background-color:#ffffff;
+			}
+			div div.swiper-scrollbar,
+			div div.swiper-scrollbar div,
+			.swiper-container div.swiper-pagination{ 
+				min-height:auto;
+			}
+			
 			.pagination {
 				text-align: right;
 				padding: 5px 0;
@@ -54,7 +64,8 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
 		<script src="/static/js/swiper.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		<script src="/static/js/jquery.autoKana.js"></script>
 	</head>
 	<body>
 		{% block content %}{% endblock %}

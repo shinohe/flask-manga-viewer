@@ -1,6 +1,5 @@
 {% extends "base_layout.html" %}
 {% block content %}
-{% include "base_menu.html" %}
 <!-- Form ================================================== -->
 <style>
 	form#uploadForm div{
@@ -12,6 +11,9 @@
 	.col-md-12 {
 		padding: 0 0.5em;
 	}
+	.ui-btn input{
+		background-color: #000066;
+	}
 	div.searchArea>div.ui-btn {
 		background-color: #87CEFA;
 	}
@@ -19,39 +21,30 @@
 <script type="text/javascript">
 $(function(){
 	$.fn.autoKana('#title', '#titleKana',{katakana:true});
+	$("#upload").click(function(){
+		window.location.href="/inputFile"
+	});
+	$("#list").click(function(){
+		window.location.href="/list"
+	});
 });
 </script>
-<br>
 <div class="form">
 	<div class="container indexContent">
 		<div class="row">
 			<div class="col-md-12">
-				<h4>ファイルアップロード画面</h4>
+				<h4>管理画面</h4>
 				<div class="error-message" style="color:red;min-height:auto;">
 					{% if error_message %}
 						{{ error_message }}
 					{% endif %}
 				</div>
-				<div class="message" style="color:#000;min-height:auto;">
-					{% if message %}
-						{{ message }}
-					{% endif %}
-				</div>
 				<form action="/upload" method="post" class="form-inline" id="uploadForm" enctype='multipart/form-data' data-ajax="false">
 					<fieldset class='ui-grid-a'>
-						<input type="file" id="inputFile" name="inputFile"/>
+						<input type="button" id="upload" name="upload"/>
 					</fieldset>
 					<fieldset class='ui-grid-a'>
-						<input type="text" id="title" name="title" placeholder="タイトル"/>
-					</fieldset>
-					<fieldset class='ui-grid-a'>
-						<input type="text" id="titleKana" name="titleKana" placeholder="タイトルカナ"/>
-					</fieldset>
-					<fieldset class='ui-grid-a'>
-						<input type="text" id="category" name="category" placeholder="カテゴリー"/>
-					</fieldset>
-					<fieldset class='ui-grid-a'>
-						<input type="submit" value="ファイルを送信"/>
+						<input type="button" id="list" name="list"/>
 					</fieldset>
 				</form>
 			</div>
