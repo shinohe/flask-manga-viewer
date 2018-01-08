@@ -2,9 +2,25 @@
 {% block content %}
 
 <script type="text/javascript">
+var showLoading = function(){
+	$.mobile.loading("show", {
+		text: "Loading...",
+		textVisible: true,
+		theme: "z",
+		html: ""
+	});
+}
+
+var hideLoading = function(){
+	$.mobile.loading("hide");
+}
+
 $(function(){
-var mySwiper;
-var minHeight = 667;
+	var mySwiper;
+	var minHeight = 667;
+	var completeImageCount = 0;
+	showLoading();
+	
 	$.ajax({
 		type: "POST",
 		url: "/Viewer/list",
@@ -12,11 +28,13 @@ var minHeight = 667;
 		contentType: "application/json",
 		dataType: "json",
 		success: function(msg){
+			showLoading();
 			msg.sort(function(a,b){
 				return a.fileName < b.fileName ? 1 : -1
 			});
 			
 			var height = window.innerHeight;
+			var allImageCount = msg.length;
 			$.each(msg,function( index, file){
 				var $div = $("<div class='swiper-slide' style='position:relative;'></div>");
 				var $image = $("<image src='/static/images/{{page}}/" + file.fileName + "'style='position:relative;'>");
@@ -38,18 +56,25 @@ var minHeight = 667;
 				
 				$(".container.viewer").height(height);
 				$(".container.viewer").css("height",height+'px');
+				$image.bind("load", function(){
+					completeImageCount ++;
+					if (allImageCount == completeImageCount){
+						hideLoading();
+						
+						mySwiper = $('.swiper-container').swiper({
+							loop:true,
+							calculateHeight:true,
+							touchRatio:2,
+							scrollbar:".swiper-scrollbar",
+							scrollbarHide:true,
+							scrollbarDraggable:true,
+							scrollbarSnapOnRelease:true,
+							nested:true,
+							initialSlide:msg.length-1
+						});
+					}
+				});
 				
-			});
-			mySwiper = $('.swiper-container').swiper({
-				loop:true,
-				calculateHeight:true,
-				touchRatio:2,
-				scrollbar:".swiper-scrollbar",
-				scrollbarHide:true,
-				scrollbarDraggable:true,
-				scrollbarSnapOnRelease:true,
-				nested:true,
-				initialSlide:msg.length-1
 			});
 		}
 	});
