@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import psycopg2
+import sqlite3
 from datetime import datetime
 
 
