@@ -1,0 +1,169 @@
+{% extends "base_layout.html" %}
+{% block content %}
+{% include "base_menu.html" %}
+<!-- Form ================================================== -->
+<style>
+	form#uploadForm div{
+		min-height: auto;
+	}
+	.form-inline{
+		display: block;
+	}
+	.col-md-12 {
+		padding: 0 0.5em;
+	}
+	div.searchArea>div.ui-btn {
+		background-color: #87CEFA;
+	}
+</style>
+<script type="text/javascript">
+var page = 1;
+var searchFlag = false;
+
+var showLoading = function(){
+	$.mobile.loading("show", {
+		text: "Loading...",
+		textVisible: true,
+		theme: "z",
+		html: ""
+	});
+}
+
+var hideLoading = function(){
+	$.mobile.loading("hide");
+}
+
+var successCallBack = function(msg){
+	$(".indexContent").children("h2.ui-bar").remove();
+	$(".indexContent").children("fieldset.ui-grid-a").remove();
+
+	var thumNailList = JSON.parse(msg.list);
+	var $fieldset = $("<fieldset class='ui-grid-a'></fieldset>")
+	$.each(thumNailList, function( index, file){
+		var $div = $("<div class='ui-bar'><span href='' class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><a href='/Viewer?page=" + file.folderName + "' class='ui-link'><div align='center' style='width:100%'><div class='listTmnArea'><img class='listThumbnail' src='/" + file.thumbnailPath + "' alt=''></div></div></a><div class='listTitle'><strong>" + file.name + "</strong></div><div class='listGenre'>" + file.category + "</div><span class='listShowDate'>" + file.updateDate + "</span></div></span></span></span></div>");
+		var $divBlock = $("<div class='sumbnail ui-block-a'></div>");
+		$divBlock.append($div);
+		
+		$fieldset.append($divBlock);
+		$(".indexContent").append($fieldset);
+		
+//		$fieldset.ready(hideLoading());
+	});
+	$(".indexContent").ready(hideLoading());
+	if (thumNailList.length < 1) {
+		hideLoading()
+	}
+	
+	if (page >= msg.maxSize) {
+		$("#pageNext").hide();
+	} else {
+		$("#pageNext").show();
+	}
+};
+
+var latestList = function(){
+	showLoading();
+	$.ajax({
+		type: "POST",
+		url: "/Latest/list",
+		contentType: "application/json",
+		data:'{"page":' + page + ', "pageSize":8}',
+		dataType: "json",
+		success: function(msg){
+			successCallBack(msg);
+			$h2 = $('<h2 class="ui-bar ui-bar-b">新着 - ' + page + 'ページ</h2>');
+			$(".searchArea").after($h2);
+		}
+	});
+};
+
+var searchList = function(){
+	showLoading();
+	$.ajax({
+		type: "POST",
+		url: "/Search/list",
+		contentType: "application/json",
+		data:'{"page":' + page + ',"searchText":"'+$("#searchText").val()+'", "pageSize":8}',
+		dataType: "json",
+		success: function(msg){
+			successCallBack(msg);
+			$h2 = $('<h2 class="ui-bar ui-bar-b">検索 - ' + page + 'ページ</h2>');
+			$(".searchArea").after($h2);
+		}
+	});
+};
+
+var pageChange = function(){
+	if (searchFlag) {
+		searchList();
+	} else {
+		latestList();
+	}
+};
+
+var onKeyEvent = function(code)
+{
+	//エンターキー押下なら
+	if(13 === code)
+	{
+		$("#searchButton").click();
+	}
+}
+
+$(function(){
+	latestList();
+	
+	$("#searchButton").click(function(){
+		showLoading();
+		searchList();
+		searchFlag = true;
+	});
+	
+	$("#pageBack").click(function(){
+		page = page -1;
+		if (page < 1) {
+			page = 1;
+		}
+		pageChange();
+	});
+	$("#pageNext").click(function(){
+		page = page +1;
+		pageChange();
+	});
+});
+</script>
+<br>
+<div class="form">
+	<div class="container indexContent">
+		<div class="row">
+			<div class="col-md-12">
+				<h4>ファイルアップロード画面</h4>
+				<div class="error-message" style="color:red;min-height:auto;">
+					{% if error_message %}
+						{{ error_message }}
+					{% endif %}
+				</div>
+				<div class="message" style="color:#000;min-height:auto;">
+					{% if message %}
+						{{ message }}
+					{% endif %}
+				</div>
+				<form action="/delete" method="post" class="form-inline" id="deleteForm" enctype='multipart/form-data' data-ajax="false">
+					<div class="container indexContent">
+						<div class="searchArea">
+							<input type="text" id="searchText" placeholder="タイトル等" onkeypress="onKeyEvent(event.keyCode);"/>
+							<input type="button" id="searchButton" value="検索"/>
+						</div>
+					</div>
+					<div class="pageArea">
+						<fieldset class='ui-grid-a'>
+							<div class="sumbnail back ui-block-a ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageBack">戻る</div>
+							<div class="sumbnail next ui-block-b ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageNext">次へ</div>
+						</fieldset>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

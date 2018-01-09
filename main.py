@@ -292,6 +292,16 @@ def inputFile():
 	else:
 		return redirect(url_for('inputFile'))
 
+# 裏画面リスト表示
+@app.route('/manageList', methods=['GET', 'POST'])
+@auth.login_required
+def manageList():
+	title = u"flask-manga-viewer"
+	if request.method == 'GET':
+		return render_template('manageList.html', title=title)
+	else:
+		return redirect(url_for('/manageList'))
+
 @app.route('/upload', methods=['POST'])
 def upload():
 	pattern = re.compile(u'.*\.zip')
