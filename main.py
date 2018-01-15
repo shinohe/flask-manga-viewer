@@ -13,6 +13,7 @@ import logs
 import kanaUtils
 import re
 import zipfile
+import shutil
 from db import insertDb
 from datetime import datetime
 
@@ -71,15 +72,18 @@ class PageList:
 		}
 
 class Thumbnail:
+	id = ''
 	name = ''
 	folderName = ''
 	thumbnailPath = ''
 	category = ''
 	description = ''
 	updateDate = ''
+	createDate = ''
 	width = 0
 	height = 0
-	def __init__(self,name, folderName, thumbnailPath, width=None, height=None,description=None, category=None, updateDate=None):
+	def __init__( self, id, name, folderName, thumbnailPath, width=None, height=None,description=None, category=None, updateDate=None, createDate=None):
+		self.id = id
 		self.name = name
 		self.folderName = folderName
 		self.thumbnailPath = thumbnailPath
@@ -88,15 +92,17 @@ class Thumbnail:
 		self.description = description
 		self.category = category
 		self.updateDate = updateDate
-	
+		self.createDate = createDate
 	def serialize(self):
 		return {
+		'id': self.id,
 		'name': self.name, 
 		'folderName': self.folderName, 
 		'thumbnailPath': self.thumbnailPath, 
 		'description': self.description, 
 		'category': self.category, 
 		'updateDate': self.updateDate, 
+		'createDate': self.createDate, 
 		'width': self.width,
 		'height': self.height		 
 		}
@@ -142,12 +148,12 @@ def thumbnnailList(page, pageSize, searchText):
 	c = conn.cursor()
 
 	count_sql = 'select count(*) from books'
-	select_sql = 'select * from books order by updateDate desc limit ? offset ?'
+	select_sql = 'select * from books order by createDate desc limit ? offset ?'
 	if searchText:
 		if (kanaUtils.ishira(searchText)):
 			searchText = kanaUtils.hira_to_kata(searchText)
 		count_sql = 'select count(*) from books where bookName like ? or kana like ? or category like ?'
-		select_sql = 'select * from books where bookName like ? or kana like ? or category like ? order by updateDate desc limit ? offset ?'
+		select_sql = 'select * from books where bookName like ? or kana like ? or category like ? order by createDate desc limit ? offset ?'
 		kana = u"%{}%".format(searchText)
 		params =(kana, kana, kana, pageSize, page*pageSize)
 		count_params = (kana, kana, kana)
@@ -157,13 +163,16 @@ def thumbnnailList(page, pageSize, searchText):
 	maxSize = c.fetchone()
 	
 	for row in c.execute(select_sql, params):
+		id = row[0]
 		name = row[1]
 		path = row[3]
 		folderName = row[4]
 		category = row[5]
 		updateDate = row[6]
+		createDate = row[7]
 		fileImage = PIL.Image.open(path)
-		viewer = Thumbnail(name, folderName, path, width=fileImage.size[0], height=fileImage.size[1], category=category, updateDate=updateDate)
+		print("createDate"+createDate)
+		viewer = Thumbnail(id, name, folderName, path, width=fileImage.size[0], height=fileImage.size[1], category=category, updateDate=updateDate, createDate=createDate)
 		imageList.append(viewer)
 	conn.close
 	
@@ -258,19 +267,6 @@ def viewList():
 	return jsonify(imageList)
 
 
-# /post にアクセスしたときの処理
-@app.route('/post', methods=['GET', 'POST'])
-def post():
-	title = "こんにちは"
-	if request.method == 'POST':
-		# リクエストフォームから「名前」を取得して
-		name = request.form['name']
-		# index.html をレンダリングする
-		return render_template('index.html',
-							   name=name, title=title)
-	else:
-		return redirect(url_for('index'))
-
 # 管理画面
 @app.route('/menu', methods=['GET', 'POST'])
 @auth.login_required
@@ -360,8 +356,73 @@ def upload():
 	print("OK")
 
 	return render_template('input.html', message=u'アップロードが正常に完了しました。')
+
+@app.route('/delete', methods=['POST'])
+def delete():
+	if request.data:
+		content_body_dict = json.loads(request.data)
 	
+		if 'id' in content_body_dict:
+			id = request.json.get('id')
 	
+	row = insertDb.findBooks(id)
+	name = row[1]
+	folderName = row[4]
+
+	insertDb.deleteBook(id)
+	
+	path = 'static' + os.sep + 'images' + os.sep + folderName
+#	ファイルの物理削除は要検討
+#	if os.path.exists(path):
+#		shutil.rmtree(path)
+	
+	return jsonify(name + "の削除は成功しました。")
+
+
+@app.route('/editView', methods=['POST','GET'])
+def editView():
+	if request.method == 'GET':
+		# リクエストフォームから「id」を取得して
+		id = request.args.get('id', '')
+		if id == '':
+			return redirect(url_for('manageList'))
+
+		row = insertDb.findBooks(id)
+		id = row[0]
+		name = row[1]
+		nameKana = row[2]
+		path = row[3]
+		folderName = row[4]
+		category = row[5]
+		updateDate = row[6]
+		createDate = row[7]
+		
+		# editView.html をレンダリングする
+		return render_template('editView.html', id=id, name=name, nameKana=nameKana, thumnailPath=path, folderName=folderName, category=category, updateDate=updateDate, createDate=createDate, title=u'編集' )
+	else:
+		id = request.form['id']
+		return render_template('manageList.html', title=u'flask-manga-viewer 管理画面', message=u'アップデートは完了しました。')
+
+@app.route('/update', methods=['POST'])
+def update():
+	inputFile = request.files['inputFile']
+	title =  request.form['title']
+	titleKana =  request.form['titleKana']
+	category =  request.form['category']
+
+	row = insertDb.findBooks(id)
+	id = row[0]
+	name = row[1]
+	nameKana = row[2]
+	path = row[3]
+	folderName = row[4]
+	category = row[5]
+	updateDate = row[6]
+	createDate = row[7]
+		
+	return jsonify(name + "の更新は成功しました。")
+
+
 @app.errorhandler(InvalidUsage)
 def error_handler(error):
 	response = jsonify({ 'message': error.message, 'result': error.status_code })

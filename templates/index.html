@@ -58,19 +58,6 @@ div.sumbnail div.ui-bar .ui-btn {
 var page = 1;
 var searchFlag = false;
 
-var showLoading = function(){
-	$.mobile.loading("show", {
-		text: "Loading...",
-		textVisible: true,
-		theme: "z",
-		html: ""
-	});
-}
-
-var hideLoading = function(){
-	$.mobile.loading("hide");
-}
-
 var successCallBack = function(msg){
 	$(".indexContent").children("h2.ui-bar").remove();
 	$(".indexContent").children("fieldset.ui-grid-a").remove();
@@ -87,6 +74,12 @@ var successCallBack = function(msg){
 			$fieldset = $(".indexContent fieldset:last");
 			$divBlock = $("<div class='sumbnail ui-block-b'></div>");
 		}
+		$div.click(function(){
+			var $link = $(this).find("a.ui-link");
+			console.log("click "+$link.attr("href"));
+			window.location.href = $link.attr("href");
+		});
+		
 		$divBlock.append($div);
 		
 		$fieldset.append($divBlock);
@@ -154,7 +147,7 @@ var onKeyEvent = function(code)
 	}
 }
 
-$(function(){
+function initializeContents(){
 	latestList();
 	
 	$("#searchButton").click(function(){
@@ -174,7 +167,7 @@ $(function(){
 		page = page +1;
 		pageChange();
 	});
-});
+}
 </script>
 <div id="headerArea" data-role="page">
 	<div data-role="header"><h1>ネットWEBビューワー</h1></div>
@@ -187,7 +180,7 @@ $(function(){
 				</div>
 			</div>
 			<div class="pageArea">
-				<fieldset class='ui-grid-a'>
+				<fieldset class="ui-grid-a">
 					<div class="sumbnail back ui-block-a ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageBack">戻る</div>
 					<div class="sumbnail next ui-block-b ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageNext">次へ</div>
 				</fieldset>

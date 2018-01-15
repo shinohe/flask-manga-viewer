@@ -15,6 +15,12 @@
 	div.searchArea>div.ui-btn {
 		background-color: #87CEFA;
 	}
+	fieldset.ui-grid-a > div.ui-block-a {
+		width:20%
+	}
+	fieldset.ui-grid-a > div.ui-block-b {
+		width:80%
+	}
 </style>
 <script type="text/javascript">
 function initializeContents(){
@@ -37,18 +43,18 @@ function initializeContents(){
 						{{ message }}
 					{% endif %}
 				</div>
-				<form action="/upload" method="post" class="form-inline" id="uploadForm" enctype='multipart/form-data' data-ajax="false">
+				<form action="/update" method="post" class="form-inline" id="uploadForm" enctype='multipart/form-data' data-ajax="false">
 					<fieldset class='ui-grid-a'>
-						<input type="file" id="inputFile" name="inputFile"/>
+						<div class="ui-block-a">タイトル</div><div class="ui-block-b"><input type="text" id="title" name="title" placeholder="タイトル" value="{%if name%}{{ name }}{% endif %}"/></div>
 					</fieldset>
 					<fieldset class='ui-grid-a'>
-						<input type="text" id="title" name="title" placeholder="タイトル"/>
+						<div class="ui-block-a">タイトル</div><div class="ui-block-b"><input type="text" id="titleKana" name="titleKana" placeholder="タイトルカナ" value="{%if nameKana%}{{ nameKana }}{% endif %}"/></div>
 					</fieldset>
 					<fieldset class='ui-grid-a'>
-						<input type="text" id="titleKana" name="titleKana" placeholder="タイトルカナ"/>
+						<div class="ui-block-a">フォルダ名</div><div class="ui-block-b"><input type="text" id="floderName" name="folderName" placeholder="フォルダ名" value="{%if folderName%}{{ folderName }}{% endif %}" readonly="true"/></div>
 					</fieldset>
 					<fieldset class='ui-grid-a'>
-						<input type="text" id="category" name="category" placeholder="カテゴリー"/>
+						<div class="ui-block-a">カテゴリー</div><div class="ui-block-b"><input type="text" id="category" name="category" placeholder="カテゴリー" value="{%if category%}{{ category }}{% endif %}"/></div>
 					</fieldset>
 					<fieldset class='ui-grid-a'>
 						<input type="submit" value="ファイルを送信"/>

@@ -3,6 +3,10 @@
 {% include "base_menu.html" %}
 <!-- Form ================================================== -->
 <style>
+	h2.ui-bar{
+		font-size: 13px;
+		margin: 0.5em 0;
+	}
 	form#uploadForm div{
 		min-height: auto;
 	}
@@ -15,43 +19,160 @@
 	div.searchArea>div.ui-btn {
 		background-color: #87CEFA;
 	}
+	.listThumbnail{
+		width:100px;
+		height:145px;
+	}
+	
+	div.indexContent, div.indexContent div {
+		min-height: auto;
+	}
+
+	div.sumbnail div.ui-bar {
+		font-size: 13px !important;
+		padding: 0.3em 0.5em;
+	}
+
+	div.sumbnail div.ui-bar .ui-btn {
+		margin: 0 auto;
+	}
+
+	.ui-btn, label.ui-btn {
+		font-weight: 400;
+		font-size: x-small;
+		white-space: normal;
+		overflow: hidden;
+		font-size:18px;
+	}
+	.listGenre {
+		font-weight: 400;
+		max-height: 1em;
+	}
+
+	.listShowDate {
+		font-weight: 400;
+	}
+
+	.pageArea {
+		margin-top: 10px;
+
+	}
+
+	#pageBack,#pageNext{
+		height:80px;
+		line-height: 80px;
+		font-size: 21px;
+		font-weight: 700;
+		white-space: normal;
+		overflow: hidden;
+		text-align: center;
+	}
+	
+	fieldset.ui-grid-c > div.ui-block-c {
+		width:40%;
+	}
+	
+	fieldset.ui-grid-c > div.ui-block-a,
+	fieldset.ui-grid-c > div.ui-block-b,
+	fieldset.ui-grid-c > div.ui-block-d {
+		width:20%;
+	}
+	
+	div.ui-bar span.ui-btn {
+		background-color:#f6f6f6;
+	}
+	
+	div.ui-bar span.ui-btn:hover {
+		background-color:#e6e6e6;
+	}
+		
+	fieldset.listTmnArea.ui-grid-c {
+		color:#222;
+	}
+	div.button {
+		height: 80px;
+		text-align: center;
+		line-height: 80px;
+		font-size: 21px;
+		font-weight: 700;
+		background-color:#87CEFA;
+		border: solid;
+		border-color:#67AEDA;
+	}
+	div.button:hover {
+		background-color:#A7DEFA;
+	}
+
 </style>
 <script type="text/javascript">
 var page = 1;
 var searchFlag = false;
+var thumNailList = [];
 
-var showLoading = function(){
-	$.mobile.loading("show", {
-		text: "Loading...",
-		textVisible: true,
-		theme: "z",
-		html: ""
+var findBook = function(id){
+	var book;
+	$.each(thumNailList, function( index, file){
+		if (file.id == parseInt(id)) {
+			book = file;
+			return false
+		}
 	});
-}
-
-var hideLoading = function(){
-	$.mobile.loading("hide");
+	return book;
 }
 
 var successCallBack = function(msg){
 	$(".indexContent").children("h2.ui-bar").remove();
-	$(".indexContent").children("fieldset.ui-grid-a").remove();
+	$(".indexContent").children("fieldset.ui-grid-solo").remove();
 
-	var thumNailList = JSON.parse(msg.list);
-	var $fieldset = $("<fieldset class='ui-grid-a'></fieldset>")
+	thumNailList = JSON.parse(msg.list);
+	var $fieldset = $("<fieldset class='ui-grid-solo'></fieldset>")
 	$.each(thumNailList, function( index, file){
-		var $div = $("<div class='ui-bar'><span href='' class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><a href='/Viewer?page=" + file.folderName + "' class='ui-link'><div align='center' style='width:100%'><div class='listTmnArea'><img class='listThumbnail' src='/" + file.thumbnailPath + "' alt=''></div></div></a><div class='listTitle'><strong>" + file.name + "</strong></div><div class='listGenre'>" + file.category + "</div><span class='listShowDate'>" + file.updateDate + "</span></div></span></span></span></div>");
+		var $div = $("<div class='ui-bar'><span class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><div align='left' style='width:100%'><fieldset class='listTmnArea ui-grid-c'><div class='ui-block-a'><img class='listThumbnail' src='/" + file.thumbnailPath + "' alt=''></div><div class='ui-block-b'><div class='thmnailPath'>サムネイルパス</div><div class='folder'>フォルダ</div><div class='listTitle'>タイトル</div><div class='listGenre'>カテゴリー</div><div class='listShowDate'>更新日付</div><div class='listShowDate'>登録日付</div></div><div class='ui-block-c'><div class='listTitle'>" + file.name + "</div><div class='thumnailPath'>" + file.thumbnailPath + "</div><div class='thumnailPath'>" + file.folderName + "</div><div class='listGenre'>" + file.category + "</div><div class='listShowDate'>" + file.updateDate + "</div><div class='listShowDate'>" + file.createDate + "</div></div><div class='ui-block-d'><div class='button ui-btn-corner-all edit'>修正<input type='hidden' value='" + file.id + "' name='editId"+file.id+"' class='editId'></div><div class='button ui-btn-corner-all delete'>削除<input type='hidden' value='" + file.id + "' name='deleteId"+file.id+"' class='deleteId'></div></div></div></div></span></span></span></div>");
 		var $divBlock = $("<div class='sumbnail ui-block-a'></div>");
 		$divBlock.append($div);
 		
 		$fieldset.append($divBlock);
 		$(".indexContent").append($fieldset);
 		
-//		$fieldset.ready(hideLoading());
+		$fieldset.ready(hideLoading());
 	});
-	$(".indexContent").ready(hideLoading());
+	
+	$(".indexContent").ready(function(){
+		// 修正画面遷移
+		$('div.edit').off('click');
+		$('div.edit').click(function(){
+			var editInput = $(this).find("input:hidden");
+			window.location.href = "/editView?id=" + editInput.val();
+		});
+		// 削除
+		$('div.delete').off('click');
+		$('div.delete').click(function(){
+			var deleteInput = $(this).find("input:hidden");
+			var deleteFile = findBook(deleteInput.val());
+			
+			if( window.confirm( deleteFile.name + "を削除してもよろしいですか?")){
+					// いいなら削除
+					$.ajax({
+						type: "POST",
+						url: "/delete",
+						contentType: "application/json",
+						data:'{"id":' + deleteFile.id + '}',
+						dataType: "json",
+						success: function(msg){
+							$("div.message").text(msg);
+							latestList();
+						},
+						error: function (msg) {
+							$("div.error").text(msg);
+							latestList();
+						}
+					});
+			}
+		});
+		hideLoading();
+	});
 	if (thumNailList.length < 1) {
-		hideLoading()
+		hideLoading();
 	}
 	
 	if (page >= msg.maxSize) {
@@ -110,7 +231,7 @@ var onKeyEvent = function(code)
 	}
 }
 
-$(function(){
+function initializeContents(){
 	latestList();
 	
 	$("#searchButton").click(function(){
@@ -130,39 +251,37 @@ $(function(){
 		page = page +1;
 		pageChange();
 	});
-});
+}
 </script>
 <br>
 <div class="form">
-	<div class="container indexContent">
-		<div class="row">
-			<div class="col-md-12">
-				<h4>ファイルアップロード画面</h4>
-				<div class="error-message" style="color:red;min-height:auto;">
-					{% if error_message %}
-						{{ error_message }}
-					{% endif %}
-				</div>
-				<div class="message" style="color:#000;min-height:auto;">
-					{% if message %}
-						{{ message }}
-					{% endif %}
-				</div>
-				<form action="/delete" method="post" class="form-inline" id="deleteForm" enctype='multipart/form-data' data-ajax="false">
-					<div class="container indexContent">
-						<div class="searchArea">
-							<input type="text" id="searchText" placeholder="タイトル等" onkeypress="onKeyEvent(event.keyCode);"/>
-							<input type="button" id="searchButton" value="検索"/>
-						</div>
-					</div>
-					<div class="pageArea">
-						<fieldset class='ui-grid-a'>
-							<div class="sumbnail back ui-block-a ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageBack">戻る</div>
-							<div class="sumbnail next ui-block-b ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageNext">次へ</div>
-						</fieldset>
-					</div>
-				</form>
+	<div class="row">
+		<div class="col-md-12">
+			<h4>ファイルアップロード画面</h4>
+			<div class="error-message" style="color:red;min-height:auto;">
+				{% if error_message %}
+					{{ error_message }}
+				{% endif %}
 			</div>
+			<div class="message" style="color:#000;min-height:auto;">
+				{% if message %}
+					{{ message }}
+				{% endif %}
+			</div>
+			<form action="/delete" method="post" class="form-inline" id="deleteForm" enctype='multipart/form-data' data-ajax="false">
+				<div class="container indexContent">
+					<div class="searchArea">
+						<input type="text" id="searchText" placeholder="タイトル等" onkeypress="onKeyEvent(event.keyCode);"/>
+						<input type="button" id="searchButton" value="検索"/>
+					</div>
+				</div>
+				<div class="pageArea">
+					<fieldset class='ui-grid-a'>
+						<div class="sumbnail back ui-block-a ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageBack">戻る</div>
+						<div class="sumbnail next ui-block-b ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageNext">次へ</div>
+					</fieldset>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>

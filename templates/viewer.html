@@ -2,24 +2,12 @@
 {% block content %}
 
 <script type="text/javascript">
-var showLoading = function(){
-	$.mobile.loading("show", {
-		text: "Loading...",
-		textVisible: true,
-		theme: "z",
-		html: ""
-	});
-}
-
-var hideLoading = function(){
-	$.mobile.loading("hide");
-}
-
-$(function(){
+function initializeContents(){
 	var mySwiper;
-	var minHeight = 667;
+	var minHeight = 667-1;
 	var completeImageCount = 0;
 	showLoading();
+	$(".background").show();	
 	
 	$.ajax({
 		type: "POST",
@@ -39,7 +27,7 @@ $(function(){
 				var $div = $("<div class='swiper-slide' style='position:relative;'></div>");
 				var $image = $("<image src='/static/images/{{page}}/" + file.fileName + "'style='position:relative;'>");
 				var rate = file.width / window.innerWidth;
-				var top = (height - file.height/rate)/2;
+				var top = Math.floor((height - file.height/rate)/2);
 				if (top < 0) {
 					top = 0;
 					rate = file.height / height;
@@ -49,8 +37,9 @@ $(function(){
 				} else {
 					$image.css('top',top+'px');
 					$image.css('width',window.innerWidth+'px');
-					$image.css('height',file.height/rate+'px');
+					$image.css('height',Math.floor(file.height/rate)+'px');
 				}
+				$div.css('height',top+Math.floor(file.height/rate)-1+'px');
 				$div.append($image);
 				$(".swiper-wrapper").append($div);
 				
@@ -59,7 +48,6 @@ $(function(){
 				$image.bind("load", function(){
 					completeImageCount ++;
 					if (allImageCount == completeImageCount){
-						hideLoading();
 						
 						mySwiper = $('.swiper-container').swiper({
 							loop:true,
@@ -72,13 +60,20 @@ $(function(){
 							nested:true,
 							initialSlide:msg.length-1
 						});
+						
+						$(".background").animate({ 
+							opacity: 0.0,
+						}, 500,  "linear",function(){
+							$(".background").hide();
+							hideLoading();
+						});
 					}
 				});
 				
 			});
 		}
 	});
-});
+}
 </script>
 
 <div class="container viewer">
