@@ -171,7 +171,6 @@ def thumbnnailList(page, pageSize, searchText):
 		updateDate = row[6]
 		createDate = row[7]
 		fileImage = PIL.Image.open(path)
-		print("createDate"+createDate)
 		viewer = Thumbnail(id, name, folderName, path, width=fileImage.size[0], height=fileImage.size[1], category=category, updateDate=updateDate, createDate=createDate)
 		imageList.append(viewer)
 	conn.close
@@ -401,26 +400,20 @@ def editView():
 		return render_template('editView.html', id=id, name=name, nameKana=nameKana, thumnailPath=path, folderName=folderName, category=category, updateDate=updateDate, createDate=createDate, title=u'編集' )
 	else:
 		id = request.form['id']
-		return render_template('manageList.html', title=u'flask-manga-viewer 管理画面', message=u'アップデートは完了しました。')
+		return redirect(url_for('editView?id='+id))
 
 @app.route('/update', methods=['POST'])
 def update():
-	inputFile = request.files['inputFile']
-	title =  request.form['title']
+	print("update")
+	id = request.form['id']
+	title = request.form['title']
 	titleKana =  request.form['titleKana']
+	folderName =  request.form['folderName']
 	category =  request.form['category']
 
-	row = insertDb.findBooks(id)
-	id = row[0]
-	name = row[1]
-	nameKana = row[2]
-	path = row[3]
-	folderName = row[4]
-	category = row[5]
-	updateDate = row[6]
-	createDate = row[7]
-		
-	return jsonify(name + "の更新は成功しました。")
+	insertDb.updateBook(id, title, titleKana, path=folderName, category=category)
+	
+	return render_template('manageList.html', title=u'flask-manga-viewer 管理画面', message=u'更新は完了しました。')
 
 
 @app.errorhandler(InvalidUsage)

@@ -43,7 +43,8 @@ function initializeContents(){
 						{{ message }}
 					{% endif %}
 				</div>
-				<form action="/update" method="post" class="form-inline" id="uploadForm" enctype='multipart/form-data' data-ajax="false">
+				<form action="/update" method="post" class="form-inline" id="uploadForm" data-ajax="false">
+					<input type="hidden" id="id" name="id"  value="{%if id%}{{ id }}{% endif %}">
 					<fieldset class='ui-grid-a'>
 						<div class="ui-block-a">タイトル</div><div class="ui-block-b"><input type="text" id="title" name="title" placeholder="タイトル" value="{%if name%}{{ name }}{% endif %}"/></div>
 					</fieldset>

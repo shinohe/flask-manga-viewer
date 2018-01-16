@@ -37,20 +37,45 @@ def insertBooks(bookName, bookNameKana, thumbnailPath, path, category):
 	conn.commit()
 	conn.close()
 
-def updateBook(id, bookName, bookNameKana, thumbnailPath, path, category):
+def updateBook(id, bookName=None, bookNameKana=None, thumbnailPath=None, path=None, category=None):
 	conn = sqlite3.connect(dbname, timeout=10)
 	c = conn.cursor()
+	updateDate = datetime.now().strftime("%Y/%m/%d %H:%M:%S");
 
 	# idなかったらそもそも問題
-	if id == ''
+	if not id:
+		conn.close()
 		raise Exception("id is not found")
 
 	# 本のデータの挿入増えたら足してく
-	update_sql = 'update set books(id, bookName, kana, thumbnailPath, path, category, updateDate, createDate) values (?,?,?,?,?,?,?,?)'
-	books = [
-	    (insId, bookName, bookNameKana,thumbnailPath, path, category, datetime.now().strftime("%Y/%m/%d %H:%M:%S"), datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
-	]
-	c.executemany(insert_sql, books)
+	# 空たぷる生成
+	param = ()
+	update_sql = 'update books set '
+	param = param + (updateDate,)
+	update_sql = update_sql + ' updateDate=?'
+	
+	if bookName:
+		param = param + (bookName,)
+		update_sql = update_sql + ', bookName=?'
+	if bookNameKana:
+		param = param + (bookNameKana,)
+		update_sql = update_sql + ', kana=?'
+	if thumbnailPath:
+		param = param + (thumbnailPath,)
+		update_sql = update_sql + ', thumbnailPath=?'
+	if path:
+		param = param + (path,)
+		update_sql = update_sql + ', path=?'
+	if category:
+		param = param + (category,)
+		update_sql = update_sql + ', category=?'
+		
+	param = param + (id,)
+	update_sql = update_sql + ' where id=?'
+	print(update_sql)
+	print(param)
+	
+	c.execute(update_sql, param)
 	conn.commit()
 	conn.close()
 
