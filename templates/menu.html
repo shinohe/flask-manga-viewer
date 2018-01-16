@@ -19,7 +19,7 @@
 	}
 </style>
 <script type="text/javascript">
-$(function(){
+function initializeContents(){
 	$.fn.autoKana('#title', '#titleKana',{katakana:true});
 	$("#upload").click(function(){
 		window.location.href="/inputFile"
@@ -27,7 +27,7 @@ $(function(){
 	$("#list").click(function(){
 		window.location.href="/list"
 	});
-});
+}
 </script>
 <div class="form">
 	<div class="container indexContent">
