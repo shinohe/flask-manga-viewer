@@ -22,7 +22,7 @@ def insertBooks(bookName, bookNameKana, thumbnailPath, path, category):
 	c = conn.cursor()
 
 	insId = 0
-	select_sql = 'select count(id) from books'
+	select_sql = 'select max(id) from books'
 	c.execute(select_sql)
 	for row in c:
 		print(row[0])

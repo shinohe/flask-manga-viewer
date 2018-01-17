@@ -25,7 +25,8 @@ import encodings.utf_8
 
 codecs.register(lambda encoding: utf_8.getregentry()) 
 
-dbpath = 'db/'
+currentDir = os.path.dirname(os.path.abspath(__file__))
+dbpath = currentDir + os.sep + 'db' + os.sep
 dbname = 'database.db'
 tablename = 'books'
 
@@ -250,7 +251,7 @@ def viewList():
 		return jsonify(res='error'), 400
 	page = request.json.get('page')
 	try:
-		fileList = os.listdir('static/images/'+page)
+		fileList = os.listdir(currentDir + os.sep + 'static' + os.sep + 'images' + os.sep + page)
 	except FileNotFoundError:
 		PIL.Image
 		raise InvalidUsage('ファイル、またはフォルダがありません path=static/images/'+page, status_code=404)
@@ -258,7 +259,7 @@ def viewList():
 	# 画像ファイルを基に
 	imageList = []
 	for file in fileList:
-		path = 'static/images/' + page + '/' + file
+		path = currentDir + os.sep + 'static' + os.sep + 'images' + os.sep + page + os.sep + file
 		fileImage = PIL.Image.open(path)
 		viewer = ViewerImage(file, width=fileImage.size[0], height=fileImage.size[1])
 		imageList.append(viewer)
