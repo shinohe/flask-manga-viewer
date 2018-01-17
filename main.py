@@ -171,7 +171,12 @@ def thumbnnailList(page, pageSize, searchText):
 		category = row[5]
 		updateDate = row[6]
 		createDate = row[7]
-		fileImage = PIL.Image.open(path)
+		try:
+			fileImage = PIL.Image.open(path)
+		except:
+			# エラーの場合は飛ばす
+			path = 'static' + os.sep + 'images' + os.sep + '404' + os.sep + '404error.png'
+			fileImage = PIL.Image.open(path)
 		viewer = Thumbnail(id, name, folderName, path, width=fileImage.size[0], height=fileImage.size[1], category=category, updateDate=updateDate, createDate=createDate)
 		imageList.append(viewer)
 	conn.close
