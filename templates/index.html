@@ -167,10 +167,17 @@ function initializeContents(){
 		page = page +1;
 		pageChange();
 	});
+	var observer = new MutationObserver(function (MutationRecords, MutationObserver) {
+		$("#NnVD").css("z-index",0);
+	});
+	$("#NnVD").ready(function(){
+		$("#NnVD").css("z-index",0);
+	});
 }
 </script>
 
 <div id="headerArea" data-role="page">
+	<div style="z-index:0"><!--shinobi1--><script type="text/javascript" src="//xa.shinobi.jp/ufo/185533400"></script><noscript><a href="//xa.shinobi.jp/bin/gg?185533400" target="_blank"><img src="//xa.shinobi.jp/bin/ll?185533400" border="0"></a><br><span style="font-size:9px"><img style="margin:0;vertical-align:text-bottom;" src="//img.shinobi.jp/tadaima/fj.gif" width="19" height="11"> </span></noscript><!--shinobi2--></div>
 	<div data-role="header"><h1>ネットWEBビューワー</h1></div>
 	<!-- admax
 	<div class="admax-native" data-admax-id="aa4aa59078f014a2bd233373683881bd"></div>
