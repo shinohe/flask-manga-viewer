@@ -61,6 +61,7 @@ var searchFlag = false;
 var successCallBack = function(msg){
 	$(".indexContent").children("h2.ui-bar").remove();
 	$(".indexContent").children("fieldset.ui-grid-a").remove();
+	$(".indexContent").children("fieldset.ui-grid-solo").remove();
 
 	var thumNailList = JSON.parse(msg.list);
 	$.each(thumNailList, function( index, file){
@@ -88,13 +89,20 @@ var successCallBack = function(msg){
 		$fieldset.ready(hideLoading());
 	});
 	if (thumNailList.length < 1) {
-		hideLoading()
+		hideLoading();
+		$fieldset = $("<fieldset class='ui-grid-solo'><div class='ui-block-a noData'>対象のデータがありません。</div></fieldset>");
+		$(".indexContent").append($fieldset);
 	}
 	
 	if (page >= msg.maxSize) {
 		$("#pageNext").hide();
-	} else {
+	}  else {
 		$("#pageNext").show();
+	}
+	 if(page == 1) {
+		$("#pageBack").hide();
+	} else {
+		$("#pageBack").show();
 	}
 };
 
