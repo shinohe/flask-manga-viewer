@@ -307,7 +307,7 @@ def manageList():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-	pattern = re.compile(u'.*\.zip')
+	pattern = re.compile(u'.*\.zip', re.IGNORECASE)
 	inputFile = request.files['inputFile']
 	title =  request.form['title']
 	titleKana =  request.form['titleKana']
