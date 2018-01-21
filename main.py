@@ -246,7 +246,7 @@ def latestList():
 
 @app.route('/Viewer')
 def viewer():
-	title = "flask-manga-viewer"
+	title = "同人Webビューア"
 	# viewer.html をレンダリングする
 	page = request.args.get('page')
 	return render_template('viewer.html', title=title, page=page)
@@ -278,7 +278,7 @@ def viewList():
 @app.route('/menu', methods=['GET', 'POST'])
 @auth.login_required
 def menu():
-	title = u"flask-manga-viewer"
+	title = u"同人Webビューア"
 	if request.method == 'GET':
 		return render_template('menu.html', title=title)
 	else:
@@ -289,7 +289,7 @@ def menu():
 @app.route('/inputFile', methods=['GET', 'POST'])
 @auth.login_required
 def inputFile():
-	title = u"flask-manga-viewer"
+	title = u"同人Webビューア"
 	if request.method == 'GET':
 		return render_template('input.html', title=title)
 	else:
@@ -299,7 +299,7 @@ def inputFile():
 @app.route('/manageList', methods=['GET', 'POST'])
 @auth.login_required
 def manageList():
-	title = u"flask-manga-viewer"
+	title = u"同人Webビューア"
 	if request.method == 'GET':
 		return render_template('manageList.html', title=title)
 	else:
@@ -421,7 +421,7 @@ def update():
 
 	insertDb.updateBook(id, title, titleKana, path=folderName, category=category)
 	
-	return render_template('manageList.html', title=u'flask-manga-viewer 管理画面', message=u'更新は完了しました。')
+	return render_template('manageList.html', title=u'同人Webビューア 管理画面', message=u'更新は完了しました。')
 
 
 @app.errorhandler(InvalidUsage)
