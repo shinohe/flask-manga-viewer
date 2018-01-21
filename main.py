@@ -15,6 +15,7 @@ import re
 import zipfile
 import shutil
 from db import insertDb
+from dist import dist
 from datetime import datetime
 
 import sys  
@@ -32,6 +33,7 @@ tablename = 'books'
 
 # 自身の名称を app という名前でインスタンス化する
 app = Flask(__name__)
+app.register_blueprint(dist.app)
 app.config['SECRET_KEY'] = 'secret key here'
 auth = HTTPDigestAuth()
 
