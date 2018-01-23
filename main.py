@@ -355,13 +355,16 @@ def upload():
 					uzf.close()
 	fileNameList.sort()
 	firstFilePath = fileNameList[0]
-		
-		
 
 	# def insertBooks(bookName, bookNameKana, thumbnailPath, path, category):
 	insertDb.insertBooks(title, titleKana, firstFilePath, randamAlphaDir, category)
+
 	print("OK")
 
+	print("directorypath:" + directorypath)
+	print("file backup:" '.'+os.sep+'crawler'+os.sep+'download'+os.sep+ 'bk' + os.sep + inputFile.filename)
+	shutil.move(directorypath, '.' + os.sep + 'crawler' + os.sep + 'download' + os.sep + 'bk' + os.sep + inputFile.filename)
+	
 	return render_template('input.html', message=u'アップロードが正常に完了しました。')
 
 @app.route('/delete', methods=['POST'])
