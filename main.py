@@ -415,7 +415,6 @@ def editView():
 
 @app.route('/update', methods=['POST'])
 def update():
-	print("update")
 	id = request.form['id']
 	title = request.form['title']
 	titleKana =  request.form['titleKana']
@@ -426,6 +425,24 @@ def update():
 	
 	return render_template('manageList.html', title=u'flask-manga-viewer 管理画面', message=u'更新は完了しました。')
 
+# フォルダから登録
+@app.route('/register', methods=['POST'])
+def register():
+	if request.method == 'GET':
+	# ファイル一覧を取得
+		
+		# editView.html をレンダリングする
+		return render_template('register.html', id=id, name=name, nameKana=nameKana, thumnailPath=path, folderName=folderName, category=category, updateDate=updateDate, createDate=createDate, title=u'編集' )
+	else:
+		return redirect(url_for('register))
+
+@app.route('/downloadList', methods=['POST'])
+def downloadList():
+	if request.method == 'GET':
+		# zipファイル一覧を取得
+		return jsonify(name + "の削除は成功しました。")
+	else:
+		return redirect(url_for('editView?id='+id))
 
 @app.errorhandler(InvalidUsage)
 def error_handler(error):
