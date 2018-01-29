@@ -17,7 +17,7 @@ def findBooks(id):
 	conn.close()
 	return book
 
-def insertBooks(bookName, bookNameKana, thumbnailPath, path, category):
+def insertBooks(bookName, bookNameKana, thumbnailPath, path, category, displayFlag):
 	conn = sqlite3.connect(dbname, timeout=10)
 	c = conn.cursor()
 
@@ -29,15 +29,15 @@ def insertBooks(bookName, bookNameKana, thumbnailPath, path, category):
 		insId = int(row[0]) + 1
 
 	# 本のデータの挿入増えたら足してく
-	insert_sql = 'insert into books(id, bookName, kana, thumbnailPath, path, category, updateDate, createDate) values (?,?,?,?,?,?,?,?)'
+	insert_sql = 'insert into books(id, bookName, kana, thumbnailPath, path, category, updateDate, createDate, displayFlag) values (?,?,?,?,?,?,?,?,?)'
 	books = [
-	    (insId, bookName, bookNameKana,thumbnailPath, path, category, datetime.now().strftime("%Y/%m/%d %H:%M:%S"), datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+	    (insId, bookName, bookNameKana,thumbnailPath, path, category, datetime.now().strftime("%Y/%m/%d %H:%M:%S"), datetime.now().strftime("%Y/%m/%d %H:%M:%S"), displayFlag)
 	]
 	c.executemany(insert_sql, books)
 	conn.commit()
 	conn.close()
 
-def updateBook(id, bookName=None, bookNameKana=None, thumbnailPath=None, path=None, category=None):
+def updateBook(id, bookName=None, bookNameKana=None, thumbnailPath=None, path=None, category=None, displayFlag=None):
 	conn = sqlite3.connect(dbname, timeout=10)
 	c = conn.cursor()
 	updateDate = datetime.now().strftime("%Y/%m/%d %H:%M:%S");
@@ -69,6 +69,9 @@ def updateBook(id, bookName=None, bookNameKana=None, thumbnailPath=None, path=No
 	if category:
 		param = param + (category,)
 		update_sql = update_sql + ', category=?'
+	if displayFlag:
+		param = param + (displayFlag,)
+		update_sql = update_sql + ', displayFlag=?'
 		
 	param = param + (id,)
 	update_sql = update_sql + ' where id=?'

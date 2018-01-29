@@ -65,7 +65,7 @@ var successCallBack = function(msg){
 
 	var thumNailList = JSON.parse(msg.list);
 	$.each(thumNailList, function( index, file){
-		var $div = $("<div class='ui-bar'><span href='' class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><a href='/Viewer?page=" + file.folderName + "' class='ui-link'><div align='center' style='width:100%'><div class='listTmnArea'><img class='listThumbnail' src='/" + file.thumbnailPath + "' alt=''></div></div></a><div class='listTitle'><strong>" + file.name + "</strong></div><div class='listGenre'>" + file.category + "</div><span class='listShowDate'>" + file.updateDate + "</span></div></span></span></span></div>");
+		var $div = $("<div class='ui-bar'><span href='' class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><a href='/Viewer?page=" + file.folderName + "' class='ui-link'><div align='center' style='width:100%'><div class='listTmnArea'><img class='listThumbnail' src='/" + file.thumbnailPath + "' alt=''></div></div></a><div class='listTitle'><strong>" + file.name + "&nbsp;</strong></div><div class='listGenre'>" + file.category + "&nbsp;</div><span class='listShowDate'>" + file.updateDate + "&nbsp;</span></div></span></span></span></div>");
 		var $divBlock;
 		var $fieldset;
 		if ( index%2 == 0) {

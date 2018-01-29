@@ -34,6 +34,13 @@
 		background-color:#d6edff;
 		color:#6bb6ff;
 	}
+	.ui-btn, label.ui-btn {
+		font-weight: 400;
+		font-size: x-small;
+		white-space: normal;
+		overflow: hidden;
+		font-size:12px;
+	}
 </style>
 <script type="text/javascript">
 function initializeMenu(){
@@ -42,6 +49,9 @@ function initializeMenu(){
 	});
 	$("#list").click(function(){
 		window.location.href="/manageList"
+	});
+	$("#register").click(function(){
+		window.location.href="/registerList"
 	});
 }
 </script>
@@ -60,6 +70,9 @@ function initializeMenu(){
 				</div>
 				<div class="ui-block-b">
 					<input type="button" id="list" name="list" value="ファイル一覧"/>
+				</div>
+				<div class="ui-block-c">
+					<input type="button" id="register" name="register" value="登録一覧"/>
 				</div>
 			</fieldset>
 		</div>
