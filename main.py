@@ -85,7 +85,8 @@ class Thumbnail:
 	createDate = ''
 	width = 0
 	height = 0
-	def __init__( self, id, name, folderName, thumbnailPath, width=None, height=None,description=None, category=None, updateDate=None, createDate=None):
+	displayFlag = 1
+	def __init__( self, id, name=None, folderName=None, thumbnailPath=None, width=None, height=None,description=None, category=None, updateDate=None, createDate=None, displayFlag=0):
 		self.id = id
 		self.name = name
 		self.folderName = folderName
@@ -96,6 +97,7 @@ class Thumbnail:
 		self.category = category
 		self.updateDate = updateDate
 		self.createDate = createDate
+		self.displayFlag = displayFlag
 	def serialize(self):
 		return {
 		'id': self.id,
@@ -107,7 +109,8 @@ class Thumbnail:
 		'updateDate': self.updateDate, 
 		'createDate': self.createDate, 
 		'width': self.width,
-		'height': self.height		 
+		'height': self.height,		 
+		'displayFlag': self.displayFlag
 		}
 
 class ViewerImage:
@@ -139,10 +142,10 @@ class ViewerImageJSONEncoder(json.JSONEncoder):
 app.json_encoder = ViewerImageJSONEncoder
 
 # メソッド
-def thumbnnailListNoKana(page, pageSize):
-	return thumbnnailList(page, pageSize, None)
+def thumbnnailListNoKana(page, pageSize, manageList):
+	return thumbnnailList(page, pageSize, None, manageList)
 
-def thumbnnailList(page, pageSize, searchText):
+def thumbnnailList(page, pageSize, searchText, manageList='False'):
 	imageList = []
 	params =(pageSize, page*pageSize)
 	
@@ -151,12 +154,19 @@ def thumbnnailList(page, pageSize, searchText):
 	c = conn.cursor()
 
 	count_sql = 'select count(*) from books'
-	select_sql = 'select * from books order by createDate desc limit ? offset ?'
+	if manageList=='True':
+		select_sql = 'select * from books order by createDate desc limit ? offset ?'
+	else:
+		select_sql = 'select * from books where displayFlag=1 order by createDate desc limit ? offset ?'
 	if searchText:
 		if (kanaUtils.ishira(searchText)):
 			searchText = kanaUtils.hira_to_kata(searchText)
-		count_sql = 'select count(*) from books where bookName like ? or kana like ? or category like ?'
-		select_sql = 'select * from books where bookName like ? or kana like ? or category like ? order by createDate desc limit ? offset ?'
+		if manageList=='True':
+			count_sql = 'select count(*) from books where bookName like ? or kana like ? or category like ?'
+			select_sql = 'select * from books where bookName like ? or kana like ? or category like ? order by createDate desc limit ? offset ?'
+		else:
+			count_sql = 'select count(*) from books where displayFlag=1, bookName like ? or kana like ? or category like ?'
+			select_sql = 'select * from books where displayFlag=1, bookName like ? or kana like ? or category like ? order by createDate desc limit ? offset ?'
 		kana = u"%{}%".format(searchText)
 		params =(kana, kana, kana, pageSize, page*pageSize)
 		count_params = (kana, kana, kana)
@@ -173,13 +183,14 @@ def thumbnnailList(page, pageSize, searchText):
 		category = row[5]
 		updateDate = row[6]
 		createDate = row[7]
+		displayFlag = row[8]
 		try:
 			fileImage = PIL.Image.open(path)
 		except:
 			# エラーの場合は飛ばす
 			path = 'static' + os.sep + 'images' + os.sep + '404' + os.sep + '404error.png'
 			fileImage = PIL.Image.open(path)
-		viewer = Thumbnail(id, name, folderName, path, width=fileImage.size[0], height=fileImage.size[1], category=category, updateDate=updateDate, createDate=createDate)
+		viewer = Thumbnail(id, name, folderName, path, width=fileImage.size[0], height=fileImage.size[1], category=category, updateDate=updateDate, createDate=createDate, displayFlag=displayFlag)
 		imageList.append(viewer)
 	conn.close
 	
@@ -217,13 +228,18 @@ def searchList():
 			page = int(page) - 1
 			if page < 0:
 				page = 0
+			
+		if 'manageList' in content_body_dict:
+			manageList = request.json.get('manageList')
+		else:
+			manageList = 'False'
 
 		if 'pageSize' in content_body_dict:
 			pageSize = request.json.get('pageSize')
 			
 		if 'searchText' in content_body_dict:
 			searchText = request.json.get('searchText')
-	return thumbnnailList(page, pageSize, searchText)
+	return thumbnnailList(page, pageSize, searchText, manageList)
 
 @app.route('/Latest/list', methods=['POST'])
 def latestList():
@@ -239,10 +255,15 @@ def latestList():
 			if page < 0:
 				page = 0
 
+		if 'manageList' in content_body_dict:
+			manageList = request.json.get('manageList')
+		else:
+			manageList = 'False'
+
 		if 'pageSize' in content_body_dict:
 			pageSize = request.json.get('pageSize')
 		
-	return thumbnnailListNoKana(page, pageSize)
+	return thumbnnailListNoKana(page, pageSize, manageList)
 
 @app.route('/Viewer')
 def viewer():
@@ -312,6 +333,7 @@ def upload():
 	title =  request.form['title']
 	titleKana =  request.form['titleKana']
 	category =  request.form['category']
+	displayFlag =  request.form['displayFlag']
 
 	# zipファイルのみ受け付ける
 	m = pattern.match(inputFile.filename)
@@ -356,8 +378,7 @@ def upload():
 	fileNameList.sort()
 	firstFilePath = fileNameList[0]
 
-	# def insertBooks(bookName, bookNameKana, thumbnailPath, path, category):
-	insertDb.insertBooks(title, titleKana, firstFilePath, randamAlphaDir, category)
+	insertDb.insertBooks(title, titleKana, firstFilePath, randamAlphaDir, category, displayFlag)
 
 	print("OK")
 
@@ -368,6 +389,7 @@ def upload():
 	return render_template('input.html', message=u'アップロードが正常に完了しました。')
 
 @app.route('/delete', methods=['POST'])
+@auth.login_required
 def delete():
 	if request.data:
 		content_body_dict = json.loads(request.data)
@@ -390,9 +412,15 @@ def delete():
 
 
 @app.route('/editView', methods=['POST','GET'])
+@auth.login_required
 def editView():
 	if request.method == 'GET':
 		# リクエストフォームから「id」を取得して
+		register = request.args.get('register', '')
+		if register == 'True':
+			folderName = request.args.get('folderName', '')
+			return render_template('editView.html',register=True , folderName=folderName, title=u'編集' )
+		
 		id = request.args.get('id', '')
 		if id == '':
 			return redirect(url_for('manageList'))
@@ -406,43 +434,105 @@ def editView():
 		category = row[5]
 		updateDate = row[6]
 		createDate = row[7]
-		
+		displayFlag = row[8]
+				
 		# editView.html をレンダリングする
-		return render_template('editView.html', id=id, name=name, nameKana=nameKana, thumnailPath=path, folderName=folderName, category=category, updateDate=updateDate, createDate=createDate, title=u'編集' )
+		return render_template('editView.html', id=id, name=name, nameKana=nameKana, thumbnailPath=path, folderName=folderName, category=category, updateDate=updateDate, createDate=createDate, displayFlag=displayFlag, title=u'編集' )
 	else:
 		id = request.form['id']
 		return redirect(url_for('editView?id='+id))
 
 @app.route('/update', methods=['POST'])
+@auth.login_required
 def update():
 	id = request.form['id']
 	title = request.form['title']
 	titleKana =  request.form['titleKana']
 	folderName =  request.form['folderName']
 	category =  request.form['category']
+	thumbnailPath = request.form['thumbnailPath']
+	displayFlag = request.form['displayFlag']
 
-	insertDb.updateBook(id, title, titleKana, path=folderName, category=category)
+	insertDb.updateBook(id, title, titleKana, path=folderName, category=category, thumbnailPath=thumbnailPath, displayFlag=displayFlag)
 	
 	return render_template('manageList.html', title=u'flask-manga-viewer 管理画面', message=u'更新は完了しました。')
 
 # フォルダから登録
-@app.route('/register', methods=['POST'])
-def register():
+@app.route('/registerList', methods=['GET','POST'])
+@auth.login_required
+def registerList():
 	if request.method == 'GET':
-	# ファイル一覧を取得
-		
 		# editView.html をレンダリングする
-		return render_template('register.html', id=id, name=name, nameKana=nameKana, thumnailPath=path, folderName=folderName, category=category, updateDate=updateDate, createDate=createDate, title=u'編集' )
+		return render_template('register.html', title=u'ファイル登録' )
 	else:
-		return redirect(url_for('register))
+		return redirect(url_for('registerList'))
 
-@app.route('/downloadList', methods=['POST'])
+@app.route('/downloadList', methods=['GET','POST'])
+@auth.login_required
 def downloadList():
-	if request.method == 'GET':
+	if request.method == 'POST':
+		crawlerPath = currentDir+os.sep+"static"+os.sep+"images"
+		
+		conn = sqlite3.connect(dbpath+dbname)
+		c = conn.cursor()
+		select_sql = 'select path from books order by createDate desc'
+		
+		folderList = os.listdir(crawlerPath)
+		
+		print(folderList)
+		for row in c.execute(select_sql):
+			print(row)
+			i = 0
+			for folder in folderList:
+				if folder == row[0]:
+					folderList.pop(i)
+					break;
+				i = i + 1;
+		i = 0
+		for folder in folderList:
+			if folder == '404':
+				folderList.pop(i)
+				break;
+			i = i + 1;
+				
+		thumbnailList = []
+		for folder in folderList:
+			fileList = os.listdir(crawlerPath+os.sep+folder)
+			if len(fileList) < 1:
+				continue
+			thumbnailPath="/static/images/"+folder+"/"+fileList[0]
+			thumbnail = Thumbnail(id = None, thumbnailPath=thumbnailPath, folderName = folder)
+			thumbnailList.append(thumbnail)
+		
 		# zipファイル一覧を取得
-		return jsonify(name + "の削除は成功しました。")
+		return jsonify(thumbnailList)
 	else:
-		return redirect(url_for('editView?id='+id))
+		return redirect(url_for('downloadList'))
+
+@app.route('/register', methods=['GET','POST'])
+@auth.login_required
+def register():
+	title =  request.form['title']
+	titleKana =  request.form['titleKana']
+	category =  request.form['category']
+	folderName =  request.form['folderName']
+	thumnailPath =  request.form['thumbnailPath']
+	displayFlag = request.form['displayFlag']
+	
+	insertDb.insertBooks(title, titleKana, thumnailPath, folderName, category, displayFlag=displayFlag)
+	return redirect(url_for('manageList'))
+
+@app.route('/thumbnailList', methods=['POST'])
+@auth.login_required
+def thumbnailList():
+	thumnailList = []
+	if request.data:
+		content_body_dict = json.loads(request.data)
+		if 'folderName' in content_body_dict:
+			folderName = request.json.get('folderName')
+			thumnailPath = currentDir+os.sep+"static"+os.sep+"images"+os.sep+folderName
+			thumnailList = os.listdir(thumnailPath)
+	return jsonify(thumnailList)
 
 @app.errorhandler(InvalidUsage)
 def error_handler(error):
