@@ -479,9 +479,7 @@ def downloadList():
 		
 		folderList = os.listdir(crawlerPath)
 		
-		print(folderList)
 		for row in c.execute(select_sql):
-			print(row)
 			i = 0
 			for folder in folderList:
 				if folder == row[0]:
