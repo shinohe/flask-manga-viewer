@@ -50,6 +50,17 @@ function initializeContents(){
 					<fieldset class='ui-grid-a'>
 						<input type="text" id="category" name="category" placeholder="カテゴリー"/>
 					</fieldset>
+					<fieldset data-role="controlgroup" data-type="horizontal">
+						<label>
+							表示
+							<input name="displayFlag" type="radio" value="1" checked/>
+						</label>
+						<label>
+							非表示
+							<input name="displayFlag" type="radio" value="0" />
+						</label>
+					</fieldset>
+
 					<fieldset class='ui-grid-a'>
 						<input type="submit" value="ファイルを送信"/>
 					</fieldset>

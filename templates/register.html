@@ -20,8 +20,8 @@
 		background-color: #87CEFA;
 	}
 	.listThumbnail{
-		width:95%;
-		height:100%;
+		width:80px;
+		height:80px;
 	}
 	
 	div.indexContent, div.indexContent div {
@@ -44,8 +44,7 @@
 		overflow: hidden;
 		font-size:12px;
 	}
-	.listGenre ,
-	.folderName {
+	.listGenre {
 		font-weight: 400;
 		max-height: 1em;
 	}
@@ -56,11 +55,12 @@
 
 	.pageArea {
 		margin-top: 10px;
+
 	}
 
 	#pageBack,#pageNext{
-		height:80px;
-		line-height: 80px;
+		height:40px;
+		line-height: 40px;
 		font-size: 21px;
 		font-weight: 700;
 		white-space: normal;
@@ -68,17 +68,18 @@
 		text-align: center;
 	}
 	
+	fieldset.ui-grid-c > div.ui-block-a {
+		width:28%;
+	}
 	fieldset.ui-grid-c > div.ui-block-c {
-		width:45%;
+		width:30%;
 	}
 	
-	fieldset.ui-grid-c > div.ui-block-a,
 	fieldset.ui-grid-c > div.ui-block-b {
-		width:20%;
+		width:22%;
 	}
-	
 	fieldset.ui-grid-c > div.ui-block-d {
-		width:15%;
+		width:20%;
 	}
 	
 	div.ui-bar span.ui-btn {
@@ -92,27 +93,20 @@
 	fieldset.listTmnArea.ui-grid-c {
 		color:#222;
 	}
+	div.listTitle {
+		height: 80px;
+		line-height: 80px;
+	}
 	div.button {
-		height: 65px;
+		height: 80px;
 		text-align: center;
-		line-height: 65px;
+		line-height: 80px;
 		font-size: 14px;
 		font-weight: 700;
 		background-color:#87CEFA;
 		border: solid;
 		border-color:#67AEDA;
 	}
-	div.indexContent div.ui-block-c > div,
-	div.indexContent div.ui-block-b > div {
-		height:2em;
-		line-height:1;
-		word-wrap: break-word;
-	}
-	div.indexContent div.ui-block-c > div.thumbnailPath,
-	div.indexContent div.ui-block-b > div.thumbnailPath {
-		height:3em;
-	}
-	
 	div.button:hover {
 		background-color:#A7DEFA;
 	}
@@ -120,7 +114,6 @@
 </style>
 <script type="text/javascript">
 var page = 1;
-var searchFlag = false;
 var thumNailList = [];
 
 var findBook = function(id){
@@ -138,10 +131,9 @@ var successCallBack = function(msg){
 	$(".indexContent").children("h2.ui-bar").remove();
 	$(".indexContent").children("fieldset.ui-grid-solo").remove();
 
-	thumNailList = JSON.parse(msg.list);
 	var $fieldset = $("<fieldset class='ui-grid-solo'></fieldset>")
-	$.each(thumNailList, function( index, file){
-		var $div = $("<div class='ui-bar'><span class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><div align='left' style='width:100%'><fieldset class='listTmnArea ui-grid-c'><div class='ui-block-a'><img class='listThumbnail' src='/" + file.thumbnailPath + "' alt=''></div><div class='ui-block-b'><div class='listTitle'>タイトル</div><div class='thumbnailPath'>サムネイルパス</div><div class='folderName'>フォルダ</div><div class='listGenre'>カテゴリー</div><div class='listShowDate'>更新日付</div><div class='listShowDate'>登録日付</div></div><div class='ui-block-c'><div class='listTitle'>" + file.name + "&nbsp;</div><div class='thumbnailPath'>" + file.thumbnailPath + "&nbsp;</div><div class='folderName'>" + file.folderName + "&nbsp;</div><div class='listGenre'>" + file.category + "&nbsp;</div><div class='listShowDate'>" + file.updateDate + "&nbsp;</div><div class='listShowDate'>" + file.createDate + "&nbsp;</div></div><div class='ui-block-d'><div class='button ui-btn-corner-all edit'>修正<input type='hidden' value='" + file.id + "' name='editId"+file.id+"' class='editId'></div><div class='button ui-btn-corner-all delete'>削除<input type='hidden' value='" + file.id + "' name='deleteId"+file.id+"' class='deleteId'></div></div></div></div></span></span></span></div>");
+	$.each(msg, function( index, file){
+		var $div = $("<div class='ui-bar'><span class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><div align='left' style='width:100%'><fieldset class='listTmnArea ui-grid-c'><div class='ui-block-a'><img class='listThumbnail' src='"+file.thumbnailPath+"' alt=''></div><div class='ui-block-b'><div class='listTitle'>フォルダ名</div></div><div class='ui-block-c'><div class='listTitle'>" + file.folderName + "&nbsp;</div></div><div class='ui-block-d'><div class='button ui-btn-corner-all edit'>登録<input type='hidden' value='" + file.folderName + "' name='editId"+file.folderName+"' class='editId'></div></div></div></div></span></span></span></div>");
 		var $divBlock = $("<div class='sumbnail ui-block-a'></div>");
 		$divBlock.append($div);
 		
@@ -156,7 +148,7 @@ var successCallBack = function(msg){
 		$('div.edit').off('click');
 		$('div.edit').click(function(){
 			var editInput = $(this).find("input:hidden");
-			window.location.href = "/editView?id=" + editInput.val();
+			window.location.href = "/editView?register=True&folderName=" + editInput.val();
 		});
 		// 削除
 		$('div.delete').off('click');
@@ -168,7 +160,7 @@ var successCallBack = function(msg){
 					// いいなら削除
 					$.ajax({
 						type: "POST",
-						url: "/delete",
+						url: "/",
 						contentType: "application/json",
 						data:'{"id":' + deleteFile.id + '}',
 						dataType: "json",
@@ -200,9 +192,9 @@ var latestList = function(){
 	showLoading();
 	$.ajax({
 		type: "POST",
-		url: "/Latest/list",
+		url: "/downloadList",
 		contentType: "application/json",
-		data:'{"page":' + page + ', "pageSize":8, "manageList":"True"}',
+		data:'{"page":' + page + ', "pageSize":8}',
 		dataType: "json",
 		success: function(msg){
 			successCallBack(msg);
@@ -212,48 +204,13 @@ var latestList = function(){
 	});
 };
 
-var searchList = function(){
-	showLoading();
-	$.ajax({
-		type: "POST",
-		url: "/Search/list",
-		contentType: "application/json",
-		data:'{"page":' + page + ',"searchText":"'+$("#searchText").val()+'", "pageSize":8, "manageList":"True"}',
-		dataType: "json",
-		success: function(msg){
-			successCallBack(msg);
-			$h2 = $('<h2 class="ui-bar ui-bar-b">検索 - ' + page + 'ページ</h2>');
-			$(".searchArea").after($h2);
-		}
-	});
-};
-
 var pageChange = function(){
-	if (searchFlag) {
-		searchList();
-	} else {
-		latestList();
-	}
+	latestList();
 };
-
-var onKeyEvent = function(code)
-{
-	//エンターキー押下なら
-	if(13 === code)
-	{
-		$("#searchButton").click();
-	}
-}
 
 function initializeContents(){
 	latestList();
-	
-	$("#searchButton").click(function(){
-		showLoading();
-		searchList();
-		searchFlag = true;
-	});
-	
+		
 	$("#pageBack").click(function(){
 		page = page -1;
 		if (page < 1) {
@@ -271,7 +228,7 @@ function initializeContents(){
 <div class="form">
 	<div class="row">
 		<div class="col-md-12">
-			<h4>ファイル管理画面</h4>
+			<h4>登録画面</h4>
 			<div class="error-message" style="color:red;min-height:auto;">
 				{% if error_message %}
 					{{ error_message }}
@@ -282,13 +239,12 @@ function initializeContents(){
 					{{ message }}
 				{% endif %}
 			</div>
-			<form action="/delete" method="post" class="form-inline" id="deleteForm" enctype='multipart/form-data' data-ajax="false">
+			<form action="/register" method="post" class="form-inline" id="deleteForm" enctype='multipart/form-data' data-ajax="false">
 				<div class="container indexContent">
 					<div class="searchArea">
-						<input type="text" id="searchText" placeholder="タイトル等" onkeypress="onKeyEvent(event.keyCode);"/>
-						<input type="button" id="searchButton" value="検索"/>
 					</div>
 				</div>
+				<!-- ページングは今のところしない -->
 				<div class="pageArea">
 					<fieldset class='ui-grid-a'>
 						<div class="sumbnail back ui-block-a ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageBack">戻る</div>

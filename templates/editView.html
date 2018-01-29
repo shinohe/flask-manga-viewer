@@ -21,18 +21,115 @@
 	fieldset.ui-grid-a > div.ui-block-b {
 		width:80%
 	}
+	.listThumbnail{
+		width:80px;
+		height:120px;
+	}
+	.thumbnailArea {
+		text-align:center;
+	}
+	.thumbnailSelectArea {
+		background-color:#ffffff;
+		height:80%;
+		top:10%;
+		width:80%;
+		left:10%;
+		z-index:99999999;
+		position: fixed;
+		opacity:0;
+		overflow: auto;
+	}
+	div.thumbnailSelectArea fieldset.ui-grid-a > div.ui-block-a,
+	div.thumbnailSelectArea fieldset.ui-grid-a > div.ui-block-b
+	{
+		width:50%;
+	}
+	div.thumbnailSelectArea .ui-btn,
+	div.thumbnailSelectArea .ui-bar {
+		margin:0;
+	}
+	div.thumbnailSelectArea .ui-bar {
+		padding:0;
+	}
 </style>
 <script type="text/javascript">
+var thumbnailSelect = function(fileName){
+	$("#thumbnailPath").val("static/images/{{folderName}}/"+fileName);
+	$("#thumbnailImage").attr("src","/static/images/{{folderName}}/"+fileName);
+}
+var thumbnailListSuccessCallBack = function(msg){
+	$("div.thumbnailSelectArea").children("fieldset.ui-grid-a").remove();
+
+	$.each(msg, function( index, file){
+		var $div = $("<div class='ui-bar'><span class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><a href='javascript:void(0);' onclick='thumbnailSelect()'  class='ui-link'><div align='center' style='width:100%'><div class='listTmnArea'><img class='listThumbnail' src='/static/images/{{ folderName }}/" + file + "' alt=''></div></div></a></span></div>");
+		$div.click(function(){
+			thumbnailSelect(file);
+		});
+		if ( index%2 == 0) {
+			$fieldset = $("<fieldset class='ui-grid-a'></fieldset>")
+			$divBlock = $("<div class='sumbnail ui-block-a'></div>");
+		} else {
+			$fieldset = $(".thumbnailSelectArea fieldset:last");
+			$divBlock = $("<div class='sumbnail ui-block-b'></div>");
+		}
+		$divBlock.append($div);
+		
+		$fieldset.append($divBlock);
+		$("div.thumbnailSelectArea").append($fieldset);
+		
+	});
+	hideLoading();
+}
+
 function initializeContents(){
 	$.fn.autoKana('#title', '#titleKana',{katakana:true});
 }
+
+// サムネイル選択エリアを表示
+function openThumbnailSelect(){
+	showLoading();
+	var $selectArea = $("div.thumbnailSelectArea");
+	$selectArea.click(function(){
+		$(".background").animate({ opacity: 0.0,}, 200,  "linear",function(){
+			$(this).hide();
+		});
+		$selectArea.animate({ opacity: 0.0,}, 200,  "linear",function(){
+			$(this).hide();
+		});
+	});
+
+	var $background = $(".background");
+	$background.css("opacity"," 0");
+	$background.show();
+	$background.animate({ opacity: 0.5,}, 200,  "linear",function(){
+		$selectArea.show();
+		$selectArea.animate({ opacity: 1,}, 200,  "linear",function(){
+		});
+	});
+
+	$.ajax({
+		type: "POST",
+		url: "/thumbnailList",
+		contentType: "application/json",
+		data:'{"folderName":' + '"{{ folderName }}"' + '}',
+		dataType: "json",
+		success: function(msg){
+			thumbnailListSuccessCallBack(msg);
+		},
+		error: function (msg) {
+			$("div.error").text(msg);
+		}
+	});
+}
+
+	
 </script>
 <br>
 <div class="form">
 	<div class="container indexContent">
 		<div class="row">
 			<div class="col-md-12">
-				<h4>ファイルアップロード画面</h4>
+				<h4>ファイル修正画面</h4>
 				<div class="error-message" style="color:red;min-height:auto;">
 					{% if error_message %}
 						{{ error_message }}
@@ -43,13 +140,21 @@ function initializeContents(){
 						{{ message }}
 					{% endif %}
 				</div>
+				{% if register %}
+				<form action="/register" method="post" class="form-inline" id="uploadForm" data-ajax="false">
+				{% else %}
 				<form action="/update" method="post" class="form-inline" id="uploadForm" data-ajax="false">
+				{% endif %}
 					<input type="hidden" id="id" name="id"  value="{%if id%}{{ id }}{% endif %}">
+					<fieldset class='ui-grid-solo thumbnailArea'>
+						<span href="javascript:void(0);" onclick="openThumbnailSelect()" target="thumbnailSelectWindow"><img id="thumbnailImage" class="listThumbnail" src="{{thumbnailPath}}"/></span>
+						<input type="hidden" id="thumbnailPath" name="thumbnailPath"  value="{{thumbnailPath}}">
+					</fieldset>
 					<fieldset class='ui-grid-a'>
 						<div class="ui-block-a">タイトル</div><div class="ui-block-b"><input type="text" id="title" name="title" placeholder="タイトル" value="{%if name%}{{ name }}{% endif %}"/></div>
 					</fieldset>
 					<fieldset class='ui-grid-a'>
-						<div class="ui-block-a">タイトル</div><div class="ui-block-b"><input type="text" id="titleKana" name="titleKana" placeholder="タイトルカナ" value="{%if nameKana%}{{ nameKana }}{% endif %}"/></div>
+						<div class="ui-block-a">タイトルカナ</div><div class="ui-block-b"><input type="text" id="titleKana" name="titleKana" placeholder="タイトルカナ" value="{%if nameKana%}{{ nameKana }}{% endif %}"/></div>
 					</fieldset>
 					<fieldset class='ui-grid-a'>
 						<div class="ui-block-a">フォルダ名</div><div class="ui-block-b"><input type="text" id="floderName" name="folderName" placeholder="フォルダ名" value="{%if folderName%}{{ folderName }}{% endif %}" readonly="true"/></div>
@@ -57,12 +162,27 @@ function initializeContents(){
 					<fieldset class='ui-grid-a'>
 						<div class="ui-block-a">カテゴリー</div><div class="ui-block-b"><input type="text" id="category" name="category" placeholder="カテゴリー" value="{%if category%}{{ category }}{% endif %}"/></div>
 					</fieldset>
+					<fieldset data-role="controlgroup" data-type="horizontal">
+						<label>
+							表示
+							<input name="displayFlag" type="radio" value="1" {% if displayFlag==1 %}checked{% endif %}/>
+						</label>
+						<label>
+							非表示
+							<input name="displayFlag" type="radio" value="0" {% if displayFlag==0 %}checked{% endif %}/>
+						</label>
+					</fieldset>
 					<fieldset class='ui-grid-a'>
-						<input type="submit" value="ファイルを送信"/>
+					{% if register %}
+						<input type="submit" value="登録"/>
+					{% else %}
+						<input type="submit" value="修正"/>
+					{% endif %}
 					</fieldset>
 				</form>
 			</div>
 		</div>
 	</div>
 </div>
+<div class="thumbnailSelectArea" style="display:none;"></div>
 {% endblock %}
