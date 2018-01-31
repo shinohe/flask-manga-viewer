@@ -13,7 +13,18 @@ from db import insertDb
 directorypath = '.'+os.sep+'crawler'+os.sep+'download'+os.sep
 displayFlag = 0
 
+zipFileNameListBk = os.listdir(directorypath+'bk')
 zipFileNameList = os.listdir(directorypath)
+
+for bkFile in zipFileNameListBk:
+	i = 0
+	for zipFileName in zipFileNameList:
+		if bkFile == zipFileName:
+			print(zipFileNameList.pop(i))
+			print('duplicate filename :'+bkFile)
+			break
+		i = i + 1
+			
 
 for zipFileName in zipFileNameList:
 	pattern = re.compile(u'.*\.zip', re.IGNORECASE)
