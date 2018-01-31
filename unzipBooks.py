@@ -10,14 +10,13 @@ from db import insertDb
 
 
 
-pattern = re.compile(u'.*\.zip', re.IGNORECASE)
 directorypath = '.'+os.sep+'crawler'+os.sep+'download'+os.sep
 displayFlag = 0
 
 zipFileNameList = os.listdir(directorypath)
 
 for zipFileName in zipFileNameList:
-	
+	pattern = re.compile(u'.*\.zip', re.IGNORECASE)
 	m = pattern.match(zipFileName)
 	if m is None:
 		continue
@@ -36,7 +35,6 @@ for zipFileName in zipFileNameList:
 	fileNameList = []
 	with zipfile.ZipFile(directorypath+zipFileName, 'r') as zf:
 		pattern = re.compile(u'.*\.jpg')
-		print(zf.namelist())
 		for f in zf.namelist():
 			fileMuch = pattern.match(f)
 			if fileMuch is None:
