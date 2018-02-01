@@ -169,6 +169,7 @@ function initializeContents(){
 	latestList();
 	
 	$("#searchButton").click(function(){
+		page = 1;
 		showLoading();
 		searchList();
 		searchFlag = true;

@@ -293,20 +293,18 @@ function initializeContents(){
 					{{ message }}
 				{% endif %}
 			</div>
-			<form action="/delete" method="post" class="form-inline" id="deleteForm" enctype='multipart/form-data' data-ajax="false">
-				<div class="container indexContent">
-					<div class="searchArea">
-						<input type="text" id="searchText" placeholder="タイトル等" onkeypress="onKeyEvent(event.keyCode);"/>
-						<input type="button" id="searchButton" value="検索"/>
-					</div>
+			<div class="container indexContent">
+				<div class="searchArea">
+					<input type="text" id="searchText" placeholder="タイトル等" onkeypress="onKeyEvent(event.keyCode);"/>
+					<input type="button" id="searchButton" value="検索"/>
 				</div>
-				<div class="pageArea">
-					<fieldset class='ui-grid-a'>
-						<div class="sumbnail back ui-block-a ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageBack">戻る</div>
-						<div class="sumbnail next ui-block-b ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageNext">次へ</div>
-					</fieldset>
-				</div>
-			</form>
+			</div>
+			<div class="pageArea">
+				<fieldset class='ui-grid-a'>
+					<div class="sumbnail back ui-block-a ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageBack">戻る</div>
+					<div class="sumbnail next ui-block-b ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageNext">次へ</div>
+				</fieldset>
+			</div>
 		</div>
 	</div>
 </div>
