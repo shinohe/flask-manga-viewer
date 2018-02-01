@@ -22,6 +22,7 @@ for bkFile in zipFileNameListBk:
 		if bkFile == zipFileName:
 			print(zipFileNameList.pop(i))
 			print('duplicate filename :'+bkFile)
+			shutil.move(directorypath+zipFileName, directorypath + 'bk' + os.sep + zipFileName)
 			break
 		i = i + 1
 			
@@ -30,6 +31,13 @@ for zipFileName in zipFileNameList:
 	pattern = re.compile(u'.*\.zip', re.IGNORECASE)
 	m = pattern.match(zipFileName)
 	if m is None:
+		if zipFileName == 'error':
+			continue
+		if zipFileName == 'bk':
+			continue
+		print(directorypath+zipFileName)
+		print(directorypath + 'error' + os.sep + zipFileName)
+		shutil.move(directorypath+zipFileName, directorypath + 'error' + os.sep + zipFileName)
 		continue
 	if not os.path.exists('crawler'+os.sep+'download'+os.sep):
 		os.makedirs('crawler'+os.sep+'download'+os.sep)
