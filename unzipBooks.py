@@ -54,10 +54,20 @@ for zipFileName in zipFileNameList:
 	fileNameList = []
 	with zipfile.ZipFile(directorypath+zipFileName, 'r') as zf:
 		pattern = re.compile(u'.*\.jpg')
+		patternJpeg = re.compile(u'.*\.jpeg')
 		for f in zf.namelist():
 			fileMuch = pattern.match(f)
 			if fileMuch is None:
-				print('foldername :'+f)
+				fileMuch = pattern.match(f)
+				if fileMuch is None:
+					print('foldername :'+f)
+				else:
+					d = openPath+os.sep+os.path.basename(f)
+					fileNameList.append(d)
+					print('filename :'+d)
+					with open(d, 'wb') as uzf:
+						uzf.write(zf.read(f))
+						uzf.close()
 			else:
 				d = openPath+os.sep+os.path.basename(f)
 				fileNameList.append(d)
