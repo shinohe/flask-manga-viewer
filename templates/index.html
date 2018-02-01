@@ -59,13 +59,14 @@ var page = 1;
 var searchFlag = false;
 
 var successCallBack = function(msg){
+	documentElement.scrollTop=0;
 	$(".indexContent").children("h2.ui-bar").remove();
 	$(".indexContent").children("fieldset.ui-grid-a").remove();
 	$(".indexContent").children("fieldset.ui-grid-solo").remove();
 
 	var thumNailList = JSON.parse(msg.list);
 	$.each(thumNailList, function( index, file){
-		var $div = $("<div class='ui-bar'><span href='' class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><a href='/Viewer?page=" + file.folderName + "' class='ui-link'><div align='center' style='width:100%'><div class='listTmnArea'><img class='listThumbnail' src='/" + file.thumbnailPath + "' alt=''></div></div></a><div class='listTitle'><strong>" + file.name + "&nbsp;</strong></div><div class='listGenre'>" + file.category + "&nbsp;</div><span class='listShowDate'>" + file.updateDate + "&nbsp;</span></div></span></span></span></div>");
+		var $div = $("<div class='ui-bar'><span href='' class='ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c' data-theme='c' style='width:100%'><span class='ui-btn-inner ui-btn-corner-all'><span class='ui-btn-text'><div><a target='_blank' href='/Viewer?page=" + file.folderName + "' class='ui-link'><div align='center' style='width:100%'><div class='listTmnArea'><img class='listThumbnail' src='/" + file.thumbnailPath + "' alt=''></div></div></a><div class='listTitle'><strong>" + file.name + "&nbsp;</strong></div><div class='listGenre'>" + file.category + "&nbsp;</div><span class='listShowDate'>" + file.updateDate + "&nbsp;</span></div></span></span></span></div>");
 		var $divBlock;
 		var $fieldset;
 		if ( index%2 == 0) {
@@ -78,7 +79,8 @@ var successCallBack = function(msg){
 		$div.click(function(){
 			var $link = $(this).find("a.ui-link");
 			console.log("click "+$link.attr("href"));
-			window.location.href = $link.attr("href");
+			window.open($link.attr("href"), null);
+//			window.location.href = $link.attr("href");
 		});
 		
 		$divBlock.append($div);
@@ -156,6 +158,14 @@ var onKeyEvent = function(code)
 }
 
 function initializeContents(){
+	if (navigator.userAgent.toLowerCase().match(/webkit|msie 5/)) {
+		// Webkit系（Safari, Chrome, iOS）、IE5はbody要素
+		documentElement = document.body;
+	} else {
+		// IE（6以上）、Firefox、Operaはhtml要素
+		documentElement = document.documentElement;
+	}
+	
 	latestList();
 	
 	$("#searchButton").click(function(){
