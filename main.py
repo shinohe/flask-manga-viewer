@@ -165,8 +165,8 @@ def thumbnnailList(page, pageSize, searchText, manageList='False'):
 			count_sql = 'select count(*) from books where bookName like ? or kana like ? or category like ?'
 			select_sql = 'select * from books where bookName like ? or kana like ? or category like ? order by createDate desc limit ? offset ?'
 		else:
-			count_sql = 'select count(*) from books where displayFlag=1, bookName like ? or kana like ? or category like ?'
-			select_sql = 'select * from books where displayFlag=1, bookName like ? or kana like ? or category like ? order by createDate desc limit ? offset ?'
+			count_sql = 'select count(*) from books where displayFlag=1 and ( bookName like ? or kana like ? or category like ? )'
+			select_sql = 'select * from books where displayFlag=1 and ( bookName like ? or kana like ? or category like ? ) order by createDate desc limit ? offset ?'
 		kana = u"%{}%".format(searchText)
 		params =(kana, kana, kana, pageSize, page*pageSize)
 		count_params = (kana, kana, kana)
