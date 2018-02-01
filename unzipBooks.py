@@ -58,7 +58,7 @@ for zipFileName in zipFileNameList:
 		for f in zf.namelist():
 			fileMuch = pattern.match(f)
 			if fileMuch is None:
-				fileMuch = pattern.match(f)
+				fileMuch = patternJpeg.match(f)
 				if fileMuch is None:
 					print('foldername :'+f)
 				else:
