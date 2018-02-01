@@ -52,15 +52,23 @@ for zipFileName in zipFileNameList:
 			break
 	
 	fileNameList = []
-	with zipfile.ZipFile(directorypath+zipFileName, 'r') as zf:
-		pattern = re.compile(u'.*\.jpg')
-		patternJpeg = re.compile(u'.*\.jpeg')
-		for f in zf.namelist():
-			fileMuch = pattern.match(f)
-			if fileMuch is None:
-				fileMuch = patternJpeg.match(f)
+	try:
+		with zipfile.ZipFile(directorypath+zipFileName, 'r') as zf:
+			pattern = re.compile(u'.*\.jpg')
+			patternJpeg = re.compile(u'.*\.jpeg')
+			for f in zf.namelist():
+				fileMuch = pattern.match(f)
 				if fileMuch is None:
-					print('foldername :'+f)
+					fileMuch = patternJpeg.match(f)
+					if fileMuch is None:
+						print('foldername :'+f)
+					else:
+						d = openPath+os.sep+os.path.basename(f)
+						fileNameList.append(d)
+						print('filename :'+d)
+						with open(d, 'wb') as uzf:
+							uzf.write(zf.read(f))
+							uzf.close()
 				else:
 					d = openPath+os.sep+os.path.basename(f)
 					fileNameList.append(d)
@@ -68,13 +76,10 @@ for zipFileName in zipFileNameList:
 					with open(d, 'wb') as uzf:
 						uzf.write(zf.read(f))
 						uzf.close()
-			else:
-				d = openPath+os.sep+os.path.basename(f)
-				fileNameList.append(d)
-				print('filename :'+d)
-				with open(d, 'wb') as uzf:
-					uzf.write(zf.read(f))
-					uzf.close()
+	except zipfile.BadZipFile:
+		print('bad zip file'+directorypath + 'error' + os.sep + zipFileName)
+		shutil.move(directorypath+zipFileName, directorypath + 'error' + os.sep + zipFileName)
+		continue
 	fileNameList.sort()
 	firstFilePath = fileNameList[0]
 	
