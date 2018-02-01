@@ -160,16 +160,17 @@ def thumbnnailList(page, pageSize, searchText, manageList='False'):
 		select_sql = 'select * from books where displayFlag=1 order by createDate desc limit ? offset ?'
 	if searchText:
 		if (kanaUtils.ishira(searchText)):
-			searchText = kanaUtils.hira_to_kata(searchText)
+			kana = kanaUtils.hira_to_kata(searchText)
 		if manageList=='True':
 			count_sql = 'select count(*) from books where bookName like ? or kana like ? or category like ?'
 			select_sql = 'select * from books where bookName like ? or kana like ? or category like ? order by createDate desc limit ? offset ?'
 		else:
 			count_sql = 'select count(*) from books where displayFlag=1 and ( bookName like ? or kana like ? or category like ? )'
 			select_sql = 'select * from books where displayFlag=1 and ( bookName like ? or kana like ? or category like ? ) order by createDate desc limit ? offset ?'
-		kana = u"%{}%".format(searchText)
-		params =(kana, kana, kana, pageSize, page*pageSize)
-		count_params = (kana, kana, kana)
+		searchText = u"%{}%".format(searchText)
+		kana = u"%{}%".format(kana)
+		params =(searchText, kana, searchText, pageSize, page*pageSize)
+		count_params = (searchText, kana, searchText)
 		c.execute(count_sql, count_params)
 	else:
 		c.execute(count_sql)
