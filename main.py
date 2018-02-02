@@ -159,19 +159,38 @@ def thumbnnailList(page, pageSize, searchText, manageList='False'):
 	else:
 		select_sql = 'select * from books where displayFlag=1 order by createDate desc limit ? offset ?'
 	if searchText:
-		kana = ''
+		searchText = u"%{}%".format(searchText)
+		params =(searchText, searchText)
+		count_params = (searchText, searchText)
+		
 		if (kanaUtils.ishira(searchText)):
 			kana = kanaUtils.hira_to_kata(searchText)
 		if manageList=='True':
-			count_sql = 'select count(*) from books where bookName like ? or kana like ? or category like ?'
-			select_sql = 'select * from books where bookName like ? or kana like ? or category like ? order by createDate desc limit ? offset ?'
+			count_sql = 'select count(*) from books where ( bookName like ? or category like ?'
+			select_sql = 'select * from books where ( bookName like ? or category like ?'
 		else:
-			count_sql = 'select count(*) from books where displayFlag=1 and ( bookName like ? or kana like ? or category like ? )'
-			select_sql = 'select * from books where displayFlag=1 and ( bookName like ? or kana like ? or category like ? ) order by createDate desc limit ? offset ?'
+			count_sql = 'select count(*) from books where displayFlag=1 and ( bookName like ? or category like ? '
+			select_sql = 'select * from books where displayFlag=1 and ( bookName like ? or category like ? '
 		searchText = u"%{}%".format(searchText)
-		kana = u"%{}%".format(kana)
-		params =(searchText, kana, searchText, pageSize, page*pageSize)
-		count_params = (searchText, kana, searchText)
+		
+		if 'kana' in locals():
+			kana = u"%{}%".format(kana)
+			count_sql = count_sql + ' or kana like ? ) '
+			select_sql = select_sql + ' or kana like ? ) '
+			count_params = count_params + (kana,)
+			params = params + (kana,)
+		else:
+			count_sql = count_sql + ' ) '
+			select_sql = select_sql + ' ) '
+			
+		select_sql = select_sql + 'order by createDate desc limit ? offset ?'
+		
+		params = params + (pageSize, page*pageSize)
+		
+		print(count_params)
+		print(params)
+		print(count_sql)
+		print(select_sql)
 		c.execute(count_sql, count_params)
 	else:
 		c.execute(count_sql)
