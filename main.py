@@ -159,6 +159,7 @@ def thumbnnailList(page, pageSize, searchText, manageList='False'):
 	else:
 		select_sql = 'select * from books where displayFlag=1 order by createDate desc limit ? offset ?'
 	if searchText:
+		kana = ''
 		if (kanaUtils.ishira(searchText)):
 			kana = kanaUtils.hira_to_kata(searchText)
 		if manageList=='True':
