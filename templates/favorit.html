@@ -183,6 +183,23 @@ var searchList = function(){
 	});
 };
 
+var favoritList = function(){
+	showLoading();
+	console.log('{"page":' + page + ', "pageSize":8, "idList":'+JSON.stringify(getFavoritCookie())+'}');
+	$.ajax({
+		type: "POST",
+		url: "/Search/list",
+		contentType: "application/json",
+		data:'{"page":' + page + ', "pageSize":8, "idList":'+JSON.stringify(getFavoritCookie())+'}',
+		dataType: "json",
+		success: function(msg){
+			successCallBack(msg);
+			$h2 = $('<h2 class="ui-bar ui-bar-b">新着 - ' + page + 'ページ</h2>');
+			$(".searchArea").after($h2);
+		}
+	});
+}
+
 var pageChange = function(){
 	if (searchFlag) {
 		searchList();
@@ -209,7 +226,7 @@ function initializeContents(){
 		documentElement = document.documentElement;
 	}
 	
-	latestList();
+	favoritList();
 	
 	$("#searchButton").click(function(){
 		page = 1;

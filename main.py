@@ -145,7 +145,7 @@ app.json_encoder = ViewerImageJSONEncoder
 def thumbnnailListNoKana(page, pageSize, manageList):
 	return thumbnnailList(page, pageSize, None, manageList)
 
-def thumbnnailList(page, pageSize, searchText, manageList='False'):
+def thumbnnailList(page, pageSize, searchText, manageList='False', idList=None):
 	imageList = []
 	params =(pageSize, page*pageSize)
 	
@@ -158,7 +158,18 @@ def thumbnnailList(page, pageSize, searchText, manageList='False'):
 		select_sql = 'select * from books order by createDate desc limit ? offset ?'
 	else:
 		select_sql = 'select * from books where displayFlag=1 order by createDate desc limit ? offset ?'
-	if searchText:
+	
+	if idList:
+		idList = [str(i) for i in idList]
+		idListStr = ','.join(idList)
+		count_sql = 'select count(*) from books where id in(%s) ' % idListStr
+		select_sql = 'select * from books where id in(%s) order by createDate desc limit ? offset ?' % idListStr
+		params =(pageSize, page*pageSize)
+		count_params = ()
+		print(params)
+		print(select_sql)
+		c.execute(count_sql, count_params)
+	elif searchText:
 		searchText = u"%{}%".format(searchText)
 		params =(searchText, searchText)
 		count_params = (searchText, searchText)
@@ -215,6 +226,8 @@ def thumbnnailList(page, pageSize, searchText, manageList='False'):
 		imageList.append(viewer)
 	conn.close
 	
+	print(maxSize)
+	print(imageList)
 	pageList = PageList(imageList, pageSize, math.ceil(maxSize[0]/pageSize), page)
 	return jsonify(pageList)
 
@@ -260,7 +273,12 @@ def searchList():
 			
 		if 'searchText' in content_body_dict:
 			searchText = request.json.get('searchText')
-	return thumbnnailList(page, pageSize, searchText, manageList)
+			
+		idList = None
+		if 'idList' in content_body_dict:
+			idList = request.json.get('idList')
+
+	return thumbnnailList(page, pageSize, searchText, manageList,idList=idList)
 
 @app.route('/Latest/list', methods=['POST'])
 def latestList():
@@ -552,6 +570,15 @@ def thumbnailList():
 			thumnailPath = currentDir+os.sep+"static"+os.sep+"images"+os.sep+folderName
 			thumnailList = os.listdir(thumnailPath)
 	return jsonify(thumnailList)
+
+@app.route('/favorit', methods=['GET','POST'])
+def favorit():
+	if request.method == 'GET':
+		# editView.html をレンダリングする
+		return render_template('favorit.html', title=u'お気に入り' )
+	else:
+		return redirect(url_for('favorit'))
+
 
 @app.errorhandler(InvalidUsage)
 def error_handler(error):
