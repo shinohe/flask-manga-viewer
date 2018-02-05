@@ -90,6 +90,40 @@
 				opacity:1.0;
 				top:0px;
 			}
+			
+			.menuArea {
+				position:absolute;
+				top:2px;
+				left:2px;
+				padding:7px;
+				background-color:#222222;
+				opacity:0.8;
+				color:#ffffff;
+				z-index:9999999999;
+				border-radius:10px;
+				border:solid 2px #ffffff;
+			}
+			
+			.sideMenu {
+				position:fixed;
+				width:50%;
+				left:-50%;
+				height:100%;
+				z-index:9999999999;
+				background-color:#000000;
+				color:#ffffff;
+				opacity:0.9;
+			}
+			
+			.menuList {
+				list-style:none;
+				padding:0px;
+			}
+			
+			.sideMenu ul li{
+				padding:10px;
+				border-top:solid 1px #cccccc;
+			}
 
 		</style>
 		<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
@@ -98,6 +132,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
 		<script src="/static/js/swiper.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
 		<script type="text/javascript">
 			$(document).bind("mobileinit", function(){
 				$.mobile.ajaxEnabled = false;
@@ -109,6 +144,7 @@
 		</script>
 		<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 		<script src="/static/js/jquery.autoKana.js"></script>
+		<script src="/static/js/favoritCookie.js"></script>
 		<script type="text/javascript">
 			var showLoading = function(){
 				$.mobile.loading("show", {
@@ -133,6 +169,49 @@
 				// 各ページのロード
 				initializeMenu();
 				initializeContents();
+				
+				//  ---- メニューこっから ---- 
+				{% if isMenu %}
+
+				$(".menuArea").click(function(){
+					$(".menuArea").animate({'opacity':'0'},100,function(){
+						$(".menuArea").hide();
+					});
+					$(".sideMenu").animate({'left':'0'},100,function(){
+					});
+					$(".background").css("opacity","0.0");
+					$(".background").show();
+					$(".background").animate({'opacity':'0.8'},100,function(){});
+				});
+				$(".background").click(function(){
+					$(".menuClose").click();
+				});
+				
+				$(".menuTop").click(function(){
+					window.location.href = "/";
+				});
+				
+				$(".menuFavorit").click(function(){
+					window.location.href = "/favorit";
+				});
+				
+				$(".menuRanking").click(function(){
+//					window.location.href = "/favorit";
+				});
+				
+				$(".menuClose").click(function(){
+					$(".menuArea").animate({'opacity':'0.8'},100,function(){
+						$(".menuArea").show();
+					});
+					$(".sideMenu").animate({'left':'-50%'},100,function(){
+					});
+					$(".background").animate({'opacity':'0'},100,function(){
+						$(this).hide();
+					});
+				});
+				
+				{% endif %}
+				// ---- メニューここまで ---- 
 				
 				$(document).bind('pagehide', function(e){
 					if ($.mobile.urlHistory && typeof($.mobile.urlHistory.getPrev == "function")) {
@@ -159,6 +238,30 @@
 
 	</head>
 	<body>
+		{% if isMenu %}
+		<div class="menuArea">
+			<div class="menuButton">
+				Menu
+			</div>
+		</div>
+		<div class="sideMenu" data-position="fixed">
+			<ul class="menuList">
+				<li class="menuTop">
+					TOPにもどる
+				</li>
+				<li class="menuFavorit">
+					お気に入り
+				</li>
+<!-- 			<li class="menuRanking">
+					ランキング
+				</li>
+-->
+				<li class="menuClose">
+					閉じる
+				</li>
+			</ul>
+		</div>
+		{% endif %}
 		{% block content %}{% endblock %}
 		<div class="background" data-position="fixed">
 			&nbsp;
