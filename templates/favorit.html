@@ -135,7 +135,7 @@ var successCallBack = function(msg){
 	});
 	if (thumNailList.length < 1) {
 		hideLoading();
-		$fieldset = $("<fieldset class='ui-grid-solo'><div class='ui-block-a noData'>対象のデータがありません。</div></fieldset>");
+		$fieldset = $("<fieldset class='ui-grid-solo'><div class='ui-block-a noData'>検索対象のデータがありません。</div></fieldset>");
 		$(".indexContent").append($fieldset);
 	}
 	
@@ -183,6 +183,23 @@ var searchList = function(){
 	});
 };
 
+var favoritList = function(){
+	showLoading();
+	console.log('{"page":' + page + ', "pageSize":8, "idList":'+JSON.stringify(getFavoritCookie())+'}');
+	$.ajax({
+		type: "POST",
+		url: "/Search/list",
+		contentType: "application/json",
+		data:'{"page":' + page + ', "pageSize":8, "idList":'+JSON.stringify(getFavoritCookie())+'}',
+		dataType: "json",
+		success: function(msg){
+			successCallBack(msg);
+			$h2 = $('<h2 class="ui-bar ui-bar-b">お気に入り - ' + page + 'ページ</h2>');
+			$(".searchArea").after($h2);
+		}
+	});
+}
+
 var pageChange = function(){
 	if (searchFlag) {
 		searchList();
@@ -208,9 +225,15 @@ function initializeContents(){
 		// IE（6以上）、Firefox、Operaはhtml要素
 		documentElement = document.documentElement;
 	}
+	$("#pageNext").hide();
+	$("#pageBack").hide();
 	
-	latestList();
-	
+	if (getFavoritCookie().length > 0) {
+		favoritList();
+	} else {
+		$h2 = $('<h2 class="ui-bar ui-bar-b">お気に入りのデータがありません</h2>');
+		$(".searchArea").after($h2);
+	}
 	$("#searchButton").click(function(){
 		page = 1;
 		showLoading();
