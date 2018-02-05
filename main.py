@@ -247,7 +247,7 @@ def index():
 	title = "flaskMangaViewer"
 	page = 1
 	# index.html をレンダリングする
-	return render_template('index.html', title=title, page=page)
+	return render_template('index.html', title=title, page=page, isMenu=True)
 
 @app.route('/Search/list', methods=['POST'])
 def searchList():
@@ -575,7 +575,7 @@ def thumbnailList():
 def favorit():
 	if request.method == 'GET':
 		# editView.html をレンダリングする
-		return render_template('favorit.html', title=u'お気に入り' )
+		return render_template('favorit.html', title=u'お気に入り', isMenu=True)
 	else:
 		return redirect(url_for('favorit'))
 

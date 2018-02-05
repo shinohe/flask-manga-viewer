@@ -98,7 +98,7 @@
 			}
 			
 			.sideMenu {
-				position:absolute;
+				position:fixed;
 				width:50%;
 				left:-50%;
 				height:100%;
@@ -163,12 +163,21 @@
 				initializeMenu();
 				initializeContents();
 				
+				//  ---- メニューこっから ---- 
+				{% if isMenu %}
+
 				$(".menuArea").click(function(){
 					$(".menuArea").animate({'opacity':'0'},100,function(){
 						$(".menuArea").hide();
 					});
 					$(".sideMenu").animate({'left':'0'},100,function(){
 					});
+					$(".background").css("opacity","0.0");
+					$(".background").show();
+					$(".background").animate({'opacity':'0.8'},100,function(){});
+				});
+				$(".background").click(function(){
+					$(".menuClose").click();
 				});
 				
 				$(".menuTop").click(function(){
@@ -180,16 +189,22 @@
 				});
 				
 				$(".menuRanking").click(function(){
-					window.location.href = "/favorit";
+//					window.location.href = "/favorit";
 				});
 				
 				$(".menuClose").click(function(){
-					$(".menuArea").animate({'opacity':'1'},100,function(){
+					$(".menuArea").animate({'opacity':'0.8'},100,function(){
 						$(".menuArea").show();
 					});
 					$(".sideMenu").animate({'left':'-50%'},100,function(){
 					});
+					$(".background").animate({'opacity':'0'},100,function(){
+						$(this).hide();
+					});
 				});
+				
+				{% endif %}
+				// ---- メニューここまで ---- 
 				
 				$(document).bind('pagehide', function(e){
 					if ($.mobile.urlHistory && typeof($.mobile.urlHistory.getPrev == "function")) {
@@ -205,12 +220,13 @@
 		</script>
 	</head>
 	<body>
+		{% if isMenu %}
 		<div class="menuArea">
 			<div class="menuButton">
 				Menu
 			</div>
 		</div>
-		<div class="sideMenu">
+		<div class="sideMenu" data-position="fixed">
 			<ul class="menuList">
 				<li class="menuTop">
 					TOPにもどる
@@ -218,14 +234,16 @@
 				<li class="menuFavorit">
 					お気に入り
 				</li>
-				<li class="menuRanking">
+<!-- 			<li class="menuRanking">
 					ランキング
 				</li>
+-->
 				<li class="menuClose">
 					閉じる
 				</li>
 			</ul>
 		</div>
+		{% endif %}
 		{% block content %}{% endblock %}
 		<div class="background" data-position="fixed">
 			&nbsp;
