@@ -151,22 +151,6 @@ var successCallBack = function(msg){
 	}
 };
 
-var latestList = function(){
-	showLoading();
-	$.ajax({
-		type: "POST",
-		url: "/Latest/list",
-		contentType: "application/json",
-		data:'{"page":' + page + ', "pageSize":8}',
-		dataType: "json",
-		success: function(msg){
-			successCallBack(msg);
-			$h2 = $('<h2 class="ui-bar ui-bar-b">新着 - ' + page + 'ページ</h2>');
-			$(".searchArea").after($h2);
-		}
-	});
-};
-
 var searchList = function(){
 	showLoading();
 	$.ajax({
@@ -204,7 +188,7 @@ var pageChange = function(){
 	if (searchFlag) {
 		searchList();
 	} else {
-		latestList();
+		favoritList();
 	}
 };
 
