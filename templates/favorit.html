@@ -236,19 +236,61 @@ function initializeContents(){
 		page = page +1;
 		pageChange();
 	});
+	var observer = new MutationObserver(function (MutationRecords, MutationObserver) {
+		$("#NnVD").css("z-index",0);
+	});
+	$("#NnVD").ready(function(){
+		$("#NnVD").css("z-index",0);
+	});
 }
 </script>
 <div id="headerArea" data-role="page">
-	<div data-role="header"><h1>ネットWEBビューワー</h1></div>
+	<div style="z-index:0"><!--shinobi1--><script type="text/javascript" src="//xa.shinobi.jp/ufo/185533400"></script><noscript><a href="//xa.shinobi.jp/bin/gg?185533400" target="_blank"><img src="//xa.shinobi.jp/bin/ll?185533400" border="0"></a><br><span style="font-size:9px"><img style="margin:0;vertical-align:text-bottom;" src="//img.shinobi.jp/tadaima/fj.gif" width="19" height="11"> </span></noscript><!--shinobi2--></div>
+	<div data-role="header"><h1>同人Webビューア</h1></div>
+	<!-- admax
+	<div class="admax-native" data-admax-id="aa4aa59078f014a2bd233373683881bd"></div>
+	 -->
+	<script src='http://fam-ad.com/ad/js/fam-tagify.min.js'></script>
+	<div id= 'div_fam_async_149063_100'>
+	<script language='javascript'><!--
+	fam_js_async('http://fam-ad.com/ad', '_site=46951&_loc=149063&_mstype=100&_width=320&_height=320');
+	//--></script>
+	</div>
+	<!-- admax -->
+	<!-- admax -->
+	<div style="text-align:center;padding:0.5em;">
+		<script src="//adm.shinobi.jp/s/c383de425a21f7a6f1c572bba1f8edbb"></script>
+	</div>
+	<!-- admax -->
 	<div data-role="content">
 		<div class="form">
 			<div class="container indexContent">
 				<div class="searchArea">
 					<input type="text" id="searchText" placeholder="タイトル等" onkeypress="onKeyEvent(event.keyCode);"/>
 					<input type="button" id="searchButton" value="検索"/>
+					<!-- admax -->
+					<div style="text-align:center;padding:0.5em;">
+						<script src="//adm.shinobi.jp/s/fa8ed5cb07209e6c47a34df52c3ef998"></script>
+					</div>
+					<!-- admax -->
 				</div>
 			</div>
 			<div class="pageArea">
+				<!-- admax
+				<div class="admax-native" data-admax-id="34c8fec58be5acec4bdc029549823799"></div>
+				 -->
+				<script src='http://fam-ad.com/ad/js/fam-tagify.min.js'></script>
+				<div id= 'div_fam_async_149057_100'>
+				<script language='javascript'><!--
+				fam_js_async('http://fam-ad.com/ad', '_site=46951&_loc=149057&_mstype=100&_width=375&_height=375');
+				//--></script>
+				<!-- admax -->
+				<!-- admax -->
+				<div style="text-align:center;padding:0.5em;">
+					<script src="//adm.shinobi.jp/s/e6b92c0aba21fdc99739dcf57f436cd7"></script>
+				</div>
+				<!-- admax -->
+
 				<fieldset class="ui-grid-a">
 					<div class="sumbnail back ui-block-a ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageBack">戻る</div>
 					<div class="sumbnail next ui-block-b ui-btn ui-btn-corner-all ui-shadow ui-btn-hover-c ui-btn-up-c" id="pageNext">次へ</div>
@@ -256,6 +298,9 @@ function initializeContents(){
 			</div>
 		</div>
 	</div>
-	<div data-role="footer">&copy; jdragon.com</div>
 </div>
+
+<script type="text/javascript" charset="utf-8" src="//adm.shinobi.jp/st/na.js"></script>
+
+
 {% endblock %}
