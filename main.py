@@ -194,7 +194,7 @@ def thumbnnailList(page, pageSize, searchText, manageList='False', idList=None):
 			count_sql = count_sql + ' ) '
 			select_sql = select_sql + ' ) '
 			
-		select_sql = select_sql + 'order by createDate desc limit ? offset ?'
+		select_sql = select_sql + 'order by updateDate desc limit ? offset ?'
 		
 		params = params + (pageSize, page*pageSize)
 		
