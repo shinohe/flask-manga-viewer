@@ -155,15 +155,15 @@ def thumbnnailList(page, pageSize, searchText, manageList='False', idList=None):
 
 	count_sql = 'select count(*) from books'
 	if manageList=='True':
-		select_sql = 'select * from books order by createDate desc limit ? offset ?'
+		select_sql = 'select * from books order by updateDate desc limit ? offset ?'
 	else:
-		select_sql = 'select * from books where displayFlag=1 order by createDate desc limit ? offset ?'
+		select_sql = 'select * from books where displayFlag=1 order by updateDate desc limit ? offset ?'
 	
 	if idList:
 		idList = [str(i) for i in idList]
 		idListStr = ','.join(idList)
 		count_sql = 'select count(*) from books where id in(%s) ' % idListStr
-		select_sql = 'select * from books where id in(%s) order by createDate desc limit ? offset ?' % idListStr
+		select_sql = 'select * from books where id in(%s) order by updateDate desc limit ? offset ?' % idListStr
 		params =(pageSize, page*pageSize)
 		count_params = ()
 		print(params)
@@ -514,7 +514,7 @@ def downloadList():
 		
 		conn = sqlite3.connect(dbpath+dbname)
 		c = conn.cursor()
-		select_sql = 'select path from books order by createDate desc'
+		select_sql = 'select path from books order by updateDate desc'
 		
 		folderList = os.listdir(crawlerPath)
 		
