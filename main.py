@@ -177,8 +177,10 @@ def thumbnnailList(page, pageSize, searchText, manageList='False', idList=None):
 		if (kanaUtils.ishira(searchText)):
 			kana = kanaUtils.hira_to_kata(searchText)
 		if manageList=='True':
-			count_sql = 'select count(*) from books where ( bookName like ? or category like ?'
-			select_sql = 'select * from books where ( bookName like ? or category like ?'
+			count_sql = 'select count(*) from books where ( bookName like ? or category like ? or path like ?'
+			select_sql = 'select * from books where ( bookName like ? or category like ? or path like ?'
+			params = params + (searchText, )
+			count_params = count_params + (searchText, )
 		else:
 			count_sql = 'select count(*) from books where displayFlag=1 and ( bookName like ? or category like ? '
 			select_sql = 'select * from books where displayFlag=1 and ( bookName like ? or category like ? '
