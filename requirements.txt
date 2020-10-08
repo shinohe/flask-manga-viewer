@@ -1,3 +1,5 @@
 flask
 pillow
 flask-httpauth
+gunicorn
+numpy
