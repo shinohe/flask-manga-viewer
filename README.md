@@ -1,7 +1,7 @@
 # flask-manga-viewer
 
 ## heroku  
-https://ancient-taiga-12123.herokuapp.com/
+https://flask-manga-viewer.herokuapp.com/
 
 ## usage
 flaskでの漫画ビューワーのサンプルです
